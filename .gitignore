@@ -1,0 +1,7 @@
+*.user
+*.scr
+bin/
+obj/
+packages/
+.vs/
+*.config
