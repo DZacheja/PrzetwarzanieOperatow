@@ -213,6 +213,16 @@ namespace Przetwarzanie_plikow_PDF {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap left_arrow {
+            get {
+                object obj = ResourceManager.GetObject("left_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap minus_round {
             get {
                 object obj = ResourceManager.GetObject("minus_round", resourceCulture);
@@ -267,6 +277,26 @@ namespace Przetwarzanie_plikow_PDF {
             get {
                 object obj = ResourceManager.GetObject("product_logo", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redo_arrow {
+            get {
+                object obj = ResourceManager.GetObject("redo_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap right_arrow {
+            get {
+                object obj = ResourceManager.GetObject("right_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -376,6 +406,16 @@ namespace Przetwarzanie_plikow_PDF {
         internal static System.Drawing.Bitmap top_arrow {
             get {
                 object obj = ResourceManager.GetObject("top_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap undo_arrow {
+            get {
+                object obj = ResourceManager.GetObject("undo_arrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

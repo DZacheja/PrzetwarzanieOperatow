@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgramSettingsOption));
             this.chkReadOnLoad = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -53,10 +54,10 @@
             // 
             this.chkReadOnLoad.AutoSize = true;
             this.chkReadOnLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.chkReadOnLoad.Location = new System.Drawing.Point(6, 26);
+            this.chkReadOnLoad.Location = new System.Drawing.Point(6, 25);
             this.chkReadOnLoad.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chkReadOnLoad.Name = "chkReadOnLoad";
-            this.chkReadOnLoad.Size = new System.Drawing.Size(330, 24);
+            this.chkReadOnLoad.Size = new System.Drawing.Size(307, 24);
             this.chkReadOnLoad.TabIndex = 1;
             this.chkReadOnLoad.Text = "Wczytuj ustawienia po starcie programu";
             this.chkReadOnLoad.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -72,7 +73,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(435, 449);
+            this.panel1.Size = new System.Drawing.Size(435, 427);
             this.panel1.TabIndex = 4;
             // 
             // panel2
@@ -83,11 +84,11 @@
             this.panel2.Controls.Add(this.splitter1);
             this.panel2.Controls.Add(this.btnSave);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(0, 318);
+            this.panel2.Location = new System.Drawing.Point(0, 302);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(5);
-            this.panel2.Size = new System.Drawing.Size(435, 62);
+            this.panel2.Size = new System.Drawing.Size(435, 59);
             this.panel2.TabIndex = 9;
             // 
             // btnLoadFromFile
@@ -98,7 +99,7 @@
             this.btnLoadFromFile.Location = new System.Drawing.Point(169, 5);
             this.btnLoadFromFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnLoadFromFile.Name = "btnLoadFromFile";
-            this.btnLoadFromFile.Size = new System.Drawing.Size(50, 52);
+            this.btnLoadFromFile.Size = new System.Drawing.Size(50, 49);
             this.btnLoadFromFile.TabIndex = 5;
             this.toolTip1.SetToolTip(this.btnLoadFromFile, "Wczytaj ustawienia z pliku");
             this.btnLoadFromFile.UseVisualStyleBackColor = true;
@@ -108,7 +109,7 @@
             // 
             this.splitter2.Location = new System.Drawing.Point(137, 5);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(32, 52);
+            this.splitter2.Size = new System.Drawing.Size(32, 49);
             this.splitter2.TabIndex = 4;
             this.splitter2.TabStop = false;
             // 
@@ -120,7 +121,7 @@
             this.btnSaveToFile.Location = new System.Drawing.Point(87, 5);
             this.btnSaveToFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSaveToFile.Name = "btnSaveToFile";
-            this.btnSaveToFile.Size = new System.Drawing.Size(50, 52);
+            this.btnSaveToFile.Size = new System.Drawing.Size(50, 49);
             this.btnSaveToFile.TabIndex = 3;
             this.toolTip1.SetToolTip(this.btnSaveToFile, "Zapisz obecne ustawienia do pliku");
             this.btnSaveToFile.UseVisualStyleBackColor = true;
@@ -130,7 +131,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(55, 5);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(32, 52);
+            this.splitter1.Size = new System.Drawing.Size(32, 49);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
             // 
@@ -142,7 +143,7 @@
             this.btnSave.Location = new System.Drawing.Point(5, 5);
             this.btnSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(50, 52);
+            this.btnSave.Size = new System.Drawing.Size(50, 49);
             this.btnSave.TabIndex = 0;
             this.toolTip1.SetToolTip(this.btnSave, "Zapisz zmiany");
             this.btnSave.UseVisualStyleBackColor = true;
@@ -154,30 +155,30 @@
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(0, 197);
+            this.groupBox2.Location = new System.Drawing.Point(0, 187);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox2.Size = new System.Drawing.Size(435, 121);
+            this.groupBox2.Size = new System.Drawing.Size(435, 115);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Domyślne wartości:";
             // 
             // txtBarcodePrefix
             // 
-            this.txtBarcodePrefix.Location = new System.Drawing.Point(12, 76);
+            this.txtBarcodePrefix.Location = new System.Drawing.Point(12, 72);
             this.txtBarcodePrefix.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtBarcodePrefix.Name = "txtBarcodePrefix";
-            this.txtBarcodePrefix.Size = new System.Drawing.Size(324, 27);
+            this.txtBarcodePrefix.Size = new System.Drawing.Size(324, 25);
             this.txtBarcodePrefix.TabIndex = 4;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(12, 48);
+            this.label1.Location = new System.Drawing.Point(12, 46);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(211, 20);
+            this.label1.Size = new System.Drawing.Size(203, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Początek kodu kreskowego";
             // 
@@ -188,11 +189,11 @@
             this.groupBox1.Controls.Add(this.btnSearchFor);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox1.Location = new System.Drawing.Point(0, 111);
+            this.groupBox1.Location = new System.Drawing.Point(0, 105);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox1.Size = new System.Drawing.Size(435, 86);
+            this.groupBox1.Size = new System.Drawing.Size(435, 82);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Domyślna okładka";
@@ -201,10 +202,10 @@
             // 
             this.btnCoverClear.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.delete;
             this.btnCoverClear.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCoverClear.Location = new System.Drawing.Point(306, 25);
+            this.btnCoverClear.Location = new System.Drawing.Point(306, 24);
             this.btnCoverClear.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCoverClear.Name = "btnCoverClear";
-            this.btnCoverClear.Size = new System.Drawing.Size(35, 40);
+            this.btnCoverClear.Size = new System.Drawing.Size(35, 38);
             this.btnCoverClear.TabIndex = 4;
             this.toolTip1.SetToolTip(this.btnCoverClear, "Usuń domyślną okładkę");
             this.btnCoverClear.UseVisualStyleBackColor = true;
@@ -212,21 +213,21 @@
             // 
             // txtCoverPath
             // 
-            this.txtCoverPath.Location = new System.Drawing.Point(12, 32);
+            this.txtCoverPath.Location = new System.Drawing.Point(12, 30);
             this.txtCoverPath.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCoverPath.Name = "txtCoverPath";
             this.txtCoverPath.ReadOnly = true;
-            this.txtCoverPath.Size = new System.Drawing.Size(252, 27);
+            this.txtCoverPath.Size = new System.Drawing.Size(252, 25);
             this.txtCoverPath.TabIndex = 3;
             // 
             // btnSearchFor
             // 
             this.btnSearchFor.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.search_file;
             this.btnSearchFor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSearchFor.Location = new System.Drawing.Point(270, 25);
+            this.btnSearchFor.Location = new System.Drawing.Point(270, 24);
             this.btnSearchFor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSearchFor.Name = "btnSearchFor";
-            this.btnSearchFor.Size = new System.Drawing.Size(35, 40);
+            this.btnSearchFor.Size = new System.Drawing.Size(35, 38);
             this.btnSearchFor.TabIndex = 2;
             this.toolTip1.SetToolTip(this.btnSearchFor, "Wybierz okładkę domyślną");
             this.btnSearchFor.UseVisualStyleBackColor = true;
@@ -242,7 +243,7 @@
             this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox3.Size = new System.Drawing.Size(435, 111);
+            this.groupBox3.Size = new System.Drawing.Size(435, 105);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Opcje ogólne";
@@ -251,10 +252,10 @@
             // 
             this.chkLoadMergeSettings.AutoSize = true;
             this.chkLoadMergeSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.chkLoadMergeSettings.Location = new System.Drawing.Point(6, 59);
+            this.chkLoadMergeSettings.Location = new System.Drawing.Point(6, 56);
             this.chkLoadMergeSettings.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chkLoadMergeSettings.Name = "chkLoadMergeSettings";
-            this.chkLoadMergeSettings.Size = new System.Drawing.Size(366, 24);
+            this.chkLoadMergeSettings.Size = new System.Drawing.Size(343, 24);
             this.chkLoadMergeSettings.TabIndex = 2;
             this.chkLoadMergeSettings.Text = "Zapisuj wybierane ustawienia łączenia plików";
             this.chkLoadMergeSettings.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -262,11 +263,12 @@
             // 
             // ProgramSettingsOption
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(435, 449);
+            this.ClientSize = new System.Drawing.Size(435, 427);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

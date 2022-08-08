@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * Główne GUI programu
  * 
  */
@@ -25,12 +25,15 @@ namespace GUI {
         private string CoverExtension; //-> Rozszerzenie okładki
         private PdfDocument coverDocument; //->Okładka
         private PdfEditForm currentEdit;
+        private Dictionary<DataGridViewRow, PdfEditForm> editedDocuments;
+
         /// <summary>
         /// Konstruktor
         /// </summary>
         public MainWindow() {
             InitializeComponent();
             InitializeFromSettings();
+            editedDocuments = new Dictionary<DataGridViewRow,PdfEditForm>();
         }
 
         /// <summary>
@@ -97,6 +100,7 @@ namespace GUI {
         private void btnDelete_Click(object sender, EventArgs e) {
             if (dgvFiles.SelectedRows.Count > 0) {
                 DataGridViewRow rowToRemove = dgvFiles.SelectedRows[0];
+                editedDocuments.Remove(rowToRemove);
                 dgvFiles.Rows.Remove(rowToRemove);
             }
         }
@@ -168,6 +172,9 @@ namespace GUI {
 
             //dodaj wiersz do listy
             this.Invoke(new Action(() => dgvFiles.Rows.Add(row)));
+
+            //dodaj element do listy edytownaych plików
+            editedDocuments.Add(row, null);
         }
 
         #endregion
@@ -239,14 +246,18 @@ namespace GUI {
                             this.pgrFiles.Value = (int)CurrentFileCounter;
                             this.lblFileCounter.Text = $"{CurrentFileCounter} z {FileCount}";
                         }));
-
-                        //Sprawdzenie pliku i w razie konieczności konwersja na PDF
-                        filePath = ProgramOperations.ConvertFileToPdf(row);
-
-                        currentFile = row.Cells[0].Value.ToString();
-                        //Otworzenie dołączanego pliku
-                        PdfDocument mergingDoc = PdfReader.Open(filePath, PdfDocumentOpenMode.Import);
-
+                        PdfDocument mergingDoc;
+                        if (editedDocuments[row] != null) {
+                            string name = Path.Combine(ProgramSettings.TEMP_FOLDER, _tempFileCounter.ToString() + "_okladka");
+                            editedDocuments[row].document.Save(name);
+                            mergingDoc = PdfReader.Open(name, PdfDocumentOpenMode.Import);
+                        } else {
+                            //Sprawdzenie pliku i w razie konieczności konwersja na PDF
+                            filePath = ProgramOperations.ConvertFileToPdf(row);
+                            currentFile = row.Cells[0].Value.ToString();
+                            //Otworzenie dołączanego pliku
+                            mergingDoc = PdfReader.Open(filePath, PdfDocumentOpenMode.Import);
+                        }
                         //Aktualizacja informacji
                         PageCount = mergingDoc.PageCount;
                         this.Invoke(new Action(() => {
@@ -473,8 +484,9 @@ namespace GUI {
                     try {
                         string filePath = ProgramOperations.ConvertFileToPdf(txtCoverPath.Text);
                         currentEdit = new PdfEditForm(filePath);
-                        if (currentEdit.coverDocument != null) {
-                            coverDocument = currentEdit.coverDocument;
+                        currentEdit.ShowDialog();
+                        if (currentEdit.document != null) {
+                            coverDocument = currentEdit.document;
                             lblCoverInfo.Visible = true;
                             chkAddCoverWithoutChanges.Visible = false;
                             ProgramStateInfo("Pomyślnie dokonano edycji okładki");
@@ -501,8 +513,23 @@ namespace GUI {
                 this.chkAddCoverWithoutChanges.Checked = false;
             }
         }
+
         #endregion
 
-
+        /// <summary>
+        /// Edycja zaznaczonego pliku w dowolnym formacie
+        /// </summary>
+        private void btnFileEdit_Click(object sender, EventArgs e) {
+            if (dgvFiles.SelectedRows.Count != 0) {
+                if (editedDocuments[dgvFiles.SelectedRows[0]] == null) {
+                    string filename = ProgramOperations.ConvertFileToPdf(dgvFiles.SelectedRows[0].Cells[1].Value.ToString());
+                    PdfEditForm newEditedFile = new PdfEditForm(filename, true);
+                    newEditedFile.ShowDialog();
+                    editedDocuments[dgvFiles.SelectedRows[0]] = newEditedFile;
+                } else {
+                    editedDocuments[dgvFiles.SelectedRows[0]].ShowDialog();
+                }
+            }
+        }
     }
 }

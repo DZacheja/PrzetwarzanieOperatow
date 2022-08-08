@@ -1,5 +1,6 @@
-/*
+/**
  * Rozpoczêcie pracy programu
+ * Kod identyfikacyjny uczestnika: 304079
  */
 using ConsoleMode;
 using GUI;
@@ -46,7 +47,7 @@ namespace Przetwarzanie_plikow_PDF {
             } else {
                 ShowWindow(handle, SW_SHOW);
                 ProgramSettings.isWindowedApplication = false;
-                MainMenuConsole console = new MainMenuConsole();
+                MainMenuConsole console = new MainMenuConsole(args);
 
                 Console.ReadLine();
             }

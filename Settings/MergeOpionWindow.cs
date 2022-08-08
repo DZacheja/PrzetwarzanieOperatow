@@ -46,14 +46,8 @@ namespace ProgramConfiguration {
             }
             cboTextSize.SelectedIndex = 1;
             cboTextSizeNumbers.SelectedIndex = 1;
-            FontFamily[] fontFamilies;
-
-            InstalledFontCollection installedFontCollection = new InstalledFontCollection();
-            fontFamilies = installedFontCollection.Families;
-            foreach (FontFamily family in fontFamilies) {
-                cboFonts.Items.Add(family.Name);
-                cboFontsNumber.Items.Add(family.Name);
-            }
+            ProgramSettings.FillComboBoxWithSupportedFonts(cboFonts);
+            ProgramSettings.FillComboBoxWithSupportedFonts(cboFontsNumber);
             cboFonts.Text = "Arial";
             cboFontsNumber.Text = "Arial";
 
@@ -116,6 +110,9 @@ namespace ProgramConfiguration {
             this.ShowDialog();
         }
 
+        /// <summary>
+        /// Określenie jakości drukowanego pliku
+        /// </summary>
         private void cboResolution_SelectedIndexChanged(object sender, EventArgs e) {
             int selected = cboResolution.SelectedIndex;
             switch (selected) {
@@ -137,12 +134,18 @@ namespace ProgramConfiguration {
             }
         }
 
+        /// <summary>
+        /// Zmiana wartości DPI
+        /// </summary>
         private void trcImageSize_Scroll(object sender, EventArgs e) {
             int value = trcImageSize.Value;
             numImgSize.Value = value;
             ProgramSettings.ImageResolution = value;
         }
 
+        /// <summary>
+        /// Zmiana statusu optymalizacji pliku
+        /// </summary>
         private void chkPDFOptimalize_CheckedChanged(object sender, EventArgs e) {
             ProgramSettings.compression = chkPDFOptimalize.Checked;
             grpSettings.Enabled = chkPDFOptimalize.Checked;
@@ -284,6 +287,9 @@ namespace ProgramConfiguration {
 
         }
 
+        /// <summary>
+        /// Zmiana statusu numeracji stron
+        /// </summary>
         private void chkNumberInCover_CheckedChanged(object sender, EventArgs e) {
             if (chkNumberInCover.Checked) {
                 numFromPages.Value = 1;

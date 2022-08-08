@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * Klasa statyczna przechowująca parametry programu możliwe do odczytania 
  * z dowolnego miejsca
  * GS  = skrót od GhostScript
@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime;
+using System.Windows.Forms;
 
 namespace ProgramConfiguration {
     internal static class ProgramSettings {
@@ -86,6 +87,9 @@ namespace ProgramConfiguration {
 
             try {
                 Microsoft.Office.Interop.Word.Application ap = new Microsoft.Office.Interop.Word.Application();
+                ap.Quit();
+                GC.Collect();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(ap);
                 isWordInstall = true;
                 supportedFileFilters += "|Pliki word|*.doc;*.docx;*.docm";
                 extensions += "|*.dpc|*.docx|*.docm";
@@ -95,6 +99,8 @@ namespace ProgramConfiguration {
 
             try {
                 Microsoft.Office.Interop.Excel.Application ap = new Microsoft.Office.Interop.Excel.Application();
+                ap.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(ap);
                 isExcelInstall = true;
                 supportedFileFilters += "|Pliki excel|*.xls;*.xlsm;*.xlsx";
             } catch (Exception) {
@@ -164,6 +170,11 @@ namespace ProgramConfiguration {
             }
         }
 
+        /// <summary>
+        /// Ustawia obecne ustawienia rozdzieloczości łaczonych plików zgodnie z oznaczeniem
+        /// GhostScript
+        /// </summary>
+        /// <param name="i">iterator kolejności zapisu nazw oznaczających rozdzielczośc</param>
         public static void SetCurrentPdfPrinterSettings(int i) {
             switch (i) {
                 case 5:
@@ -182,6 +193,26 @@ namespace ProgramConfiguration {
                     PdfPrinterSettings = "default";
                     break;
             }
+        }
+
+        /// <summary>
+        /// Dodanie wspieranych przez program fotmatów do combobox'a
+        /// </summary>
+        /// <param name="cbo">Obiekt combobox/param>
+        /// <results>Obiekt typu combo box wypełniony listą wspieranych fontów</results>
+        public static void FillComboBoxWithSupportedFonts(ComboBox cbo) {
+            cbo.Items.Clear();
+            cbo.Items.AddRange(new object[] {
+                "Arial",
+                "Calibri",
+                "Franklin Gothic",
+                "Futura",
+                "Helvetica",
+                "Rockwell",
+                "Tahoma",
+                "Times New Roman",
+                "Verdana"
+            });
         }
     }
 }

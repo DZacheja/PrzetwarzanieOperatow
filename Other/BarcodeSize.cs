@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * GUI do dodania nowego rozmiaru kodu kreskowego
  */
 using System;

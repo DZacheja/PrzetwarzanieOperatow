@@ -30,7 +30,15 @@
             this.grpDocument = new System.Windows.Forms.GroupBox();
             this.picDocument = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.grpInCompressing = new System.Windows.Forms.GroupBox();
+            this.picLoading = new System.Windows.Forms.PictureBox();
+            this.lblProcessing = new System.Windows.Forms.Label();
             this.lblDeleteInfo = new System.Windows.Forms.Label();
+            this.grpPageNumbers = new System.Windows.Forms.GroupBox();
+            this.txtPageNumber = new System.Windows.Forms.TextBox();
+            this.btnNextPage = new System.Windows.Forms.Button();
+            this.btnPreviousPage = new System.Windows.Forms.Button();
             this.grpTextOptions = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnTextAlignRight = new System.Windows.Forms.Button();
@@ -65,20 +73,18 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.grpPageNumbers = new System.Windows.Forms.GroupBox();
-            this.btnPreviousPage = new System.Windows.Forms.Button();
-            this.btnNextPage = new System.Windows.Forms.Button();
-            this.txtPageNumber = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.PanelPDF.SuspendLayout();
             this.grpDocument.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDocument)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.grpInCompressing.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLoading)).BeginInit();
+            this.grpPageNumbers.SuspendLayout();
             this.grpTextOptions.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.grpPageNumbers.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -132,8 +138,10 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.grpPageNumbers);
+            this.groupBox2.Controls.Add(this.button1);
+            this.groupBox2.Controls.Add(this.grpInCompressing);
             this.groupBox2.Controls.Add(this.lblDeleteInfo);
+            this.groupBox2.Controls.Add(this.grpPageNumbers);
             this.groupBox2.Controls.Add(this.grpTextOptions);
             this.groupBox2.Controls.Add(this.groupBox5);
             this.groupBox2.Controls.Add(this.groupBox4);
@@ -151,6 +159,55 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Operacje na pliku";
             // 
+            // button1
+            // 
+            this.button1.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.redo_arrow;
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button1.Location = new System.Drawing.Point(957, 139);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(33, 33);
+            this.button1.TabIndex = 5;
+            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.button1, "Obróc strone zgodnie z ruchem wskazówek zegara");
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // grpInCompressing
+            // 
+            this.grpInCompressing.Controls.Add(this.picLoading);
+            this.grpInCompressing.Controls.Add(this.lblProcessing);
+            this.grpInCompressing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.grpInCompressing.Location = new System.Drawing.Point(552, 129);
+            this.grpInCompressing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.grpInCompressing.Name = "grpInCompressing";
+            this.grpInCompressing.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.grpInCompressing.Size = new System.Drawing.Size(408, 73);
+            this.grpInCompressing.TabIndex = 20;
+            this.grpInCompressing.TabStop = false;
+            this.grpInCompressing.Text = "Przetwarzanie ";
+            this.grpInCompressing.Visible = false;
+            // 
+            // picLoading
+            // 
+            this.picLoading.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.pending_work;
+            this.picLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.picLoading.Location = new System.Drawing.Point(16, 25);
+            this.picLoading.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.picLoading.Name = "picLoading";
+            this.picLoading.Size = new System.Drawing.Size(48, 44);
+            this.picLoading.TabIndex = 20;
+            this.picLoading.TabStop = false;
+            // 
+            // lblProcessing
+            // 
+            this.lblProcessing.AutoSize = true;
+            this.lblProcessing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblProcessing.Location = new System.Drawing.Point(70, 33);
+            this.lblProcessing.Name = "lblProcessing";
+            this.lblProcessing.Size = new System.Drawing.Size(329, 20);
+            this.lblProcessing.TabIndex = 19;
+            this.lblProcessing.Text = "Proszę czekać trwa wyświetlanie nowej strony";
+            // 
             // lblDeleteInfo
             // 
             this.lblDeleteInfo.AutoSize = true;
@@ -162,6 +219,54 @@
             this.lblDeleteInfo.TabIndex = 13;
             this.lblDeleteInfo.Text = "USUWANIE WSKAZANYCH ELEMENTÓW AKTYWNE";
             this.lblDeleteInfo.Visible = false;
+            // 
+            // grpPageNumbers
+            // 
+            this.grpPageNumbers.Controls.Add(this.txtPageNumber);
+            this.grpPageNumbers.Controls.Add(this.btnNextPage);
+            this.grpPageNumbers.Controls.Add(this.btnPreviousPage);
+            this.grpPageNumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.grpPageNumbers.Location = new System.Drawing.Point(248, 129);
+            this.grpPageNumbers.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.grpPageNumbers.Name = "grpPageNumbers";
+            this.grpPageNumbers.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.grpPageNumbers.Size = new System.Drawing.Size(204, 79);
+            this.grpPageNumbers.TabIndex = 19;
+            this.grpPageNumbers.TabStop = false;
+            this.grpPageNumbers.Text = "Strony:";
+            // 
+            // txtPageNumber
+            // 
+            this.txtPageNumber.Location = new System.Drawing.Point(6, 32);
+            this.txtPageNumber.Name = "txtPageNumber";
+            this.txtPageNumber.Size = new System.Drawing.Size(115, 25);
+            this.txtPageNumber.TabIndex = 2;
+            this.txtPageNumber.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPageNumber_KeyPress);
+            // 
+            // btnNextPage
+            // 
+            this.btnNextPage.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.right_arrow;
+            this.btnNextPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnNextPage.Location = new System.Drawing.Point(162, 29);
+            this.btnNextPage.Name = "btnNextPage";
+            this.btnNextPage.Size = new System.Drawing.Size(33, 33);
+            this.btnNextPage.TabIndex = 1;
+            this.btnNextPage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.btnNextPage, "Następna strona");
+            this.btnNextPage.UseVisualStyleBackColor = true;
+            this.btnNextPage.Click += new System.EventHandler(this.btnNextPage_Click);
+            // 
+            // btnPreviousPage
+            // 
+            this.btnPreviousPage.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.left_arrow;
+            this.btnPreviousPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnPreviousPage.Location = new System.Drawing.Point(126, 29);
+            this.btnPreviousPage.Name = "btnPreviousPage";
+            this.btnPreviousPage.Size = new System.Drawing.Size(33, 33);
+            this.btnPreviousPage.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.btnPreviousPage, "Poprzednia strona");
+            this.btnPreviousPage.UseVisualStyleBackColor = true;
+            this.btnPreviousPage.Click += new System.EventHandler(this.btnPreviousPage_Click);
             // 
             // grpTextOptions
             // 
@@ -243,6 +348,7 @@
             this.chkItalic.TabIndex = 21;
             this.chkItalic.TabStop = false;
             this.chkItalic.Text = " ";
+            this.toolTip1.SetToolTip(this.chkItalic, "Pochyl tekst");
             this.chkItalic.UseVisualStyleBackColor = true;
             this.chkItalic.CheckedChanged += new System.EventHandler(this.FontCheck);
             // 
@@ -259,6 +365,7 @@
             this.chkBold.Size = new System.Drawing.Size(25, 29);
             this.chkBold.TabIndex = 19;
             this.chkBold.TabStop = false;
+            this.toolTip1.SetToolTip(this.chkBold, "Pogrubienie tekstu");
             this.chkBold.UseVisualStyleBackColor = true;
             this.chkBold.CheckedChanged += new System.EventHandler(this.FontCheck);
             // 
@@ -271,6 +378,7 @@
             this.btnColor.Name = "btnColor";
             this.btnColor.Size = new System.Drawing.Size(33, 30);
             this.btnColor.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.btnColor, "Wybierz kolor tekstu");
             this.btnColor.UseVisualStyleBackColor = false;
             this.btnColor.Click += new System.EventHandler(this.btnColor_Click);
             // 
@@ -416,7 +524,7 @@
             this.btnSaveDoc.Name = "btnSaveDoc";
             this.btnSaveDoc.Size = new System.Drawing.Size(35, 33);
             this.btnSaveDoc.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.btnSaveDoc, "Zapisz okładkę do pliku");
+            this.toolTip1.SetToolTip(this.btnSaveDoc, "Zapisz zmiany do pliku");
             this.btnSaveDoc.UseVisualStyleBackColor = true;
             this.btnSaveDoc.Click += new System.EventHandler(this.btnSaveDoc_Click);
             // 
@@ -564,49 +672,6 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // grpPageNumbers
-            // 
-            this.grpPageNumbers.Controls.Add(this.txtPageNumber);
-            this.grpPageNumbers.Controls.Add(this.btnNextPage);
-            this.grpPageNumbers.Controls.Add(this.btnPreviousPage);
-            this.grpPageNumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.grpPageNumbers.Location = new System.Drawing.Point(248, 129);
-            this.grpPageNumbers.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.grpPageNumbers.Name = "grpPageNumbers";
-            this.grpPageNumbers.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.grpPageNumbers.Size = new System.Drawing.Size(204, 79);
-            this.grpPageNumbers.TabIndex = 19;
-            this.grpPageNumbers.TabStop = false;
-            this.grpPageNumbers.Text = "Strony:";
-            // 
-            // btnPreviousPage
-            // 
-            this.btnPreviousPage.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.top_arrow;
-            this.btnPreviousPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnPreviousPage.Location = new System.Drawing.Point(126, 29);
-            this.btnPreviousPage.Name = "btnPreviousPage";
-            this.btnPreviousPage.Size = new System.Drawing.Size(33, 33);
-            this.btnPreviousPage.TabIndex = 0;
-            this.btnPreviousPage.UseVisualStyleBackColor = true;
-            // 
-            // btnNextPage
-            // 
-            this.btnNextPage.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.bottom_arrow;
-            this.btnNextPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnNextPage.Location = new System.Drawing.Point(162, 29);
-            this.btnNextPage.Name = "btnNextPage";
-            this.btnNextPage.Size = new System.Drawing.Size(33, 33);
-            this.btnNextPage.TabIndex = 1;
-            this.btnNextPage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnNextPage.UseVisualStyleBackColor = true;
-            // 
-            // txtPageNumber
-            // 
-            this.txtPageNumber.Location = new System.Drawing.Point(6, 32);
-            this.txtPageNumber.Name = "txtPageNumber";
-            this.txtPageNumber.Size = new System.Drawing.Size(115, 25);
-            this.txtPageNumber.TabIndex = 2;
-            // 
             // PdfEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
@@ -625,14 +690,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.picDocument)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.grpInCompressing.ResumeLayout(false);
+            this.grpInCompressing.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLoading)).EndInit();
+            this.grpPageNumbers.ResumeLayout(false);
+            this.grpPageNumbers.PerformLayout();
             this.grpTextOptions.ResumeLayout(false);
             this.grpTextOptions.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.grpPageNumbers.ResumeLayout(false);
-            this.grpPageNumbers.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -682,5 +750,11 @@
         private System.Windows.Forms.Button btnNextPage;
         private System.Windows.Forms.Button btnPreviousPage;
         private System.Windows.Forms.TextBox txtPageNumber;
+        private System.Windows.Forms.Button btnRotateMinus;
+        private System.Windows.Forms.Button btnRotatePlus;
+        private System.Windows.Forms.GroupBox grpInCompressing;
+        private System.Windows.Forms.PictureBox picLoading;
+        private System.Windows.Forms.Label lblProcessing;
+        private System.Windows.Forms.Button button1;
     }
 }

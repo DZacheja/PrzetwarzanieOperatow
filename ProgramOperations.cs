@@ -96,10 +96,10 @@ namespace Przetwarzanie_plików_PDF {
             XFont Xfont = new XFont(f.FontFamily.Name, ProgramSettings.NumberHeight, xStyle);
             double prop = Convert.ToDouble((double)page.Width / page.Width.Millimeter);
             int X, Y;
-                X = Convert.ToInt32(ProgramSettings.NumberPositionX * prop);
-                Y = Convert.ToInt32(ProgramSettings.NumberPositionY * prop);
+            X = Convert.ToInt32(ProgramSettings.NumberPositionX * prop);
+            Y = Convert.ToInt32(ProgramSettings.NumberPositionY * prop);
 
-            if (page.Orientation == PdfSharp.PageOrientation.Portrait){
+            if (page.Orientation == PdfSharp.PageOrientation.Portrait) {
 
                 if (!ProgramSettings.NumberAlignleft) {
                     X = Convert.ToInt32(page.Width - (double)X);
@@ -118,7 +118,7 @@ namespace Przetwarzanie_plików_PDF {
                     Y = Convert.ToInt32(page.Height - (double)Y);
                 }
             }
-            
+
             XPoint p = new XPoint(X, Y);
             XColor xc = XColor.FromArgb(
                 ProgramSettings.NumbersColor[0],
@@ -150,10 +150,10 @@ namespace Przetwarzanie_plików_PDF {
                 xStyle = XFontStyle.Regular;
             }
             XFont Xfont = new XFont(f.FontFamily.Name, ProgramSettings.WatermarkHeight, xStyle);
-            
+
             double prop = Convert.ToDouble((double)page.Width / page.Width.Millimeter);
             int X, Y;
-            
+
             X = Convert.ToInt32(ProgramSettings.WatermarkPositionX * prop);
             Y = Convert.ToInt32(ProgramSettings.WatermarkPositionY * prop);
 
@@ -168,7 +168,7 @@ namespace Przetwarzanie_plików_PDF {
 
             XBrush br = new XSolidBrush(xc);
             XGraphics graphics = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Append);
-            graphics.DrawString(ProgramSettings.WatermarkText, Xfont, br, p,format);
+            graphics.DrawString(ProgramSettings.WatermarkText, Xfont, br, p, format);
             graphics.Dispose();
         }
 
@@ -196,92 +196,95 @@ namespace Przetwarzanie_plików_PDF {
                 //Stwórz nowy dokument i przypisz do niego okładkę
                 PdfDocument outputDocument = new PdfDocument();
                 if (coverDocument != null) {
-                    PdfDocument coverDoc = PdfReader.Open(coverDocument.FullPath, PdfDocumentOpenMode.Import);
-                    outputDocument.AddPage(coverDoc.Pages[0]);
-                    coverDoc.Close();
+                        string name = Path.Combine(ProgramSettings.TEMP_FOLDER, _tempFileCounter.ToString() + "_okladka");
+                        coverDocument.Save(name);
+                        PdfDocument cover = PdfReader.Open(name, PdfDocumentOpenMode.Import);
+                        outputDocument.AddPage(cover.Pages[0]);
 
-                    if (ProgramSettings.watermark && ProgramSettings.WatemarkOnCover) {
-                        ProgramOperations.AddWatemark(outputDocument.Pages[0]);
-                    }
-
-                    if (ProgramSettings.pageNumeration && ProgramSettings.CoverNumeation) {
-                        ProgramOperations.AddNumber(outputDocument.Pages[0], PageNumerator);
-                        PageNumerator++;
-                    }
-
-                    CurrentFileCounter++;
-                    pages++;
-                }
-                //Dodaj do pliku wynikowego wszystkie elementy z listy plików
-                foreach (string item in fileList) {
-                    currentFile = Path.GetFileName(item);
-                    //Aktualizacja informacji o postępnie
-                    Console.WriteLine("Łączenie pliku nr " + CurrentFileCounter.ToString());
-
-                    string extension = ExtensionCheck(item);
-
-                    //Sprawdzenie pliku i w razie konieczności konwersja na PDF
-                    filePath = ProgramOperations.ConvertFileToPdf(item);
-                    if (filePath == null) {
-                        Console.WriteLine($"Bład podczas zamiany pliku {currentFile} na PDF");
-                        continue;
-                    }
-
-                    //Otworzenie dołączanego pliku
-                    PdfDocument mergingDoc = PdfReader.Open(filePath, PdfDocumentOpenMode.Import);
-
-                    //Aktualizacja informacji
-                    PageCount = mergingDoc.PageCount;
-                    Console.WriteLine("Dzołączanie pliku: " + currentFile);
-
-                    CurrentPageCounter = 0;
-                    Console.WriteLine("Dołączono stron: ");
-                    Console.WriteLine(" ");
-                    //Dodawanie stron z pliku do pliku wynikowego
-                    foreach (PdfPage page in mergingDoc.Pages) {
-                        ClearCurrentConsoleLine();
-                        outputDocument.Pages.Add(page);
-                        if (ProgramSettings.watermark) {
-                            ProgramOperations.AddWatemark(outputDocument.Pages[(int)pages]);
+                        if (ProgramSettings.watermark && ProgramSettings.WatemarkOnCover) {
+                            ProgramOperations.AddWatemark(outputDocument.Pages[0]);
                         }
-                        if (ProgramSettings.pageNumeration && (pages + 1) >= Pagefrom) {
-                            ProgramOperations.AddNumber(outputDocument.Pages[(int)pages], PageNumerator);
+
+                        if (ProgramSettings.pageNumeration && ProgramSettings.CoverNumeation) {
+                            ProgramOperations.AddNumber(outputDocument.Pages[0], PageNumerator);
                             PageNumerator++;
                         }
-                        CurrentPageCounter++;
-                        Console.Clear();
-                        Console.WriteLine($"Dołączono stronę {CurrentPageCounter} z {PageCount}");
-                        Console.WriteLine($"Łączna ilość stron {pages}");
+
+                        CurrentFileCounter++;
                         pages++;
                     }
+                    //Dodaj do pliku wynikowego wszystkie elementy z listy plików
+                    foreach (string item in fileList) {
+                        currentFile = Path.GetFileName(item);
+                        //Aktualizacja informacji o postępnie
+                        Console.WriteLine("Łączenie pliku nr " + CurrentFileCounter.ToString());
 
-                    //Zamykanie pliku dołączanego 
-                    mergingDoc.Close();
-                    mergingDoc.Dispose();
-                    CurrentFileCounter++;
-                }
+                        string extension = ExtensionCheck(item);
 
-                //Jeżeli użytkownik wybrał kompresję wykonaj ją, w innym przypadku zapisz plik wynikowy
-                if (ProgramSettings.compression) {
-                    //Zapisz obecny plik wynikowy do folderu z plikami czasowymi i zamknij go
-                    string PdfFileName = _tempFileCounter.ToString() + "_ImageTemp.pdf";
-                    string tempPath = Path.Combine(ProgramSettings.TEMP_FOLDER, PdfFileName);
-                    _tempFileCounter++;
-                    outputDocument.Save(tempPath);
-                    outputDocument.Close();
-                    outputDocument.Dispose();
+                        //Sprawdzenie pliku i w razie konieczności konwersja na PDF
+                        filePath = ProgramOperations.ConvertFileToPdf(item);
+                        if (filePath == null) {
+                            Console.WriteLine($"Bład podczas zamiany pliku {currentFile} na PDF");
+                            continue;
+                        }
 
-                    //Rozpocznij optymalizację
-                    OptimalizePDFFile(tempPath, outputFile);
-                    Console.WriteLine("Operacja pomyślna");
+                        //Otworzenie dołączanego pliku
+                        PdfDocument mergingDoc = PdfReader.Open(filePath, PdfDocumentOpenMode.Import);
+
+                        //Aktualizacja informacji
+                        PageCount = mergingDoc.PageCount;
+                        Console.WriteLine("Dzołączanie pliku: " + currentFile);
+
+                        CurrentPageCounter = 0;
+                        Console.WriteLine("Dołączono stron: ");
+                        Console.WriteLine(" ");
+                        //Dodawanie stron z pliku do pliku wynikowego
+                        foreach (PdfPage page in mergingDoc.Pages) {
+                            ClearCurrentConsoleLine();
+                            outputDocument.Pages.Add(page);
+                            if (ProgramSettings.watermark) {
+                                ProgramOperations.AddWatemark(outputDocument.Pages[(int)pages]);
+                            }
+                            if (ProgramSettings.pageNumeration && (pages + 1) >= Pagefrom) {
+                                ProgramOperations.AddNumber(outputDocument.Pages[(int)pages], PageNumerator);
+                                PageNumerator++;
+                            }
+                            CurrentPageCounter++;
+                            Console.Clear();
+                            Console.WriteLine($"Dołączono stronę {CurrentPageCounter} z {PageCount}");
+                            Console.WriteLine($"Łączna ilość stron {pages}");
+                            pages++;
+                        }
+
+                        //Zamykanie pliku dołączanego 
+                        mergingDoc.Close();
+                        mergingDoc.Dispose();
+                        CurrentFileCounter++;
+                    }
+
+                    //Jeżeli użytkownik wybrał kompresję wykonaj ją, w innym przypadku zapisz plik wynikowy
+                    if (ProgramSettings.compression) {
+                        //Zapisz obecny plik wynikowy do folderu z plikami czasowymi i zamknij go
+                        string PdfFileName = _tempFileCounter.ToString() + "_ImageTemp.pdf";
+                        string tempPath = Path.Combine(ProgramSettings.TEMP_FOLDER, PdfFileName);
+                        _tempFileCounter++;
+                        outputDocument.Save(tempPath);
+                        outputDocument.Close();
+                        outputDocument.Dispose();
+
+                        //Rozpocznij optymalizację
+                        OptimalizePDFFile(tempPath, outputFile);
+                        Console.WriteLine("Operacja pomyślna");
+                        Console.ReadLine();
+
                 } else {
-                    //Zapisz plik bez optymalizacji
-                    outputDocument.Save(outputFile);
-                    outputDocument.Close();
-                    outputDocument.Dispose();
-                    Console.WriteLine("Operacja pomyślna");
-                }
-
+                        //Zapisz plik bez optymalizacji
+                        outputDocument.Save(outputFile);
+                        outputDocument.Close();
+                        outputDocument.Dispose();
+                        Console.WriteLine("Operacja pomyślna");
+                        Console.ReadLine();
+                    }
             } catch (Exception ex) {
                 //W przypadku wystąpienia błędu poinformuj o nim użytkownika
                 if (ex.Message.Contains("protected with an encryption")) {
@@ -381,13 +384,13 @@ namespace Przetwarzanie_plików_PDF {
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static Image GetImageFromFile(string fileName) {
+        public static async Task<Image> GetImageFromFile(string fileName, int pageNumber = 0) {
             try {
                 string ghDir = ProgramSettings.GS_DLL_DIR;
                 MagickNET.SetGhostscriptDirectory(ghDir);
                 var settings = new MagickReadSettings();
                 settings.Density = new Density(300, 300);
-                settings.FrameIndex = 0;
+                settings.FrameIndex = pageNumber;
                 settings.FrameCount = 1;
                 Image IIM = null;
                 MemoryStream ms = new MemoryStream();
@@ -404,7 +407,6 @@ namespace Przetwarzanie_plików_PDF {
             }
 
         }
-
         /// <summary>
         /// Usuń pliki tymczasowe
         /// </summary>
@@ -461,7 +463,9 @@ namespace Przetwarzanie_plików_PDF {
             doc.Activate();
             doc.SaveAs2(PdfFilepath, Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatPDF);
             doc.Close();
-
+            doc = null;
+            word.Quit();
+            word = null;
             return PdfFilepath;
         }
 
@@ -547,6 +551,9 @@ namespace Przetwarzanie_plików_PDF {
             // W shoroszycie jest tylko jeden arkusz
             wb.ExportAsFixedFormat(Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF, PdfFilepath);
             wb.Close();
+            wb = null;
+            excel.Quit();
+            excel = null;
             return PdfFilepath;
         }
 

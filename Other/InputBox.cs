@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/**
+ * GUI inputboxa
+ */
+using System;
 using System.Windows.Forms;
 
-namespace OtherItems{
+namespace OtherItems {
     public partial class InputBox : Form {
         private string _results;
 

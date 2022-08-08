@@ -1,16 +1,15 @@
-﻿/*
+﻿/**
  * GUI do edycji okładki
  */
 using BarcodeLib;
 using ControlManager;
-using MigraDoc.DocumentObjectModel;
+using ImageMagick;
 using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using ProgramConfiguration;
 using Przetwarzanie_plików_PDF;
-using Przetwarzanie_plikow_PDF;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,34 +17,54 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Threading;
+using Przetwarzanie_plikow_PDF.GUI;
 
 namespace GUI {
     public partial class PdfEditForm : Form {
         #region Inicjalizacja okna
 
-
+        private bool IsMultiplepageEdit = false;
         public double multipilerX;
         public double multipilerY;
-        private List<PictureBox> InsertingElements;
-        private Dictionary<TextBox, int> InsertingTexts;
+        private List<Control> InsertingElements;
         private string docPath;
-        private double docWidth;
-        private double docHeight;
+        private double pageWidth;
+        private double pageHeight;
         private double PROP_PIX_MM;
-        private TextBox selectedText;
+        private InsertingTextBox selectedText;
         private bool _deleting;
-        public PdfDocument coverDocument;
+        public PdfDocument document;
         private Control InsertingElement;
-        
+        private Dictionary<int, EditingPageSettings> PageSettings;
+        private double _currentZoom = 1;
+        private int _currentPage;
         public PdfEditForm() { }
 
         /// <summary>
         /// Tworzenie edytra do edycji plików zawierających więcej niż jedną stronę
         /// </summary>
         /// <param name="file">ścieżka do pliku pdf</param>
-        /// <param name="multipage"></param>
-        public PdfEditForm(string file, bool multipage) {
+        /// <param name="multipage">informacje o tym czy jest to edycja wielu stron</param>
+        public PdfEditForm(string file, bool multipage) : this(file) {
+            if (multipage) {
+                IsMultiplepageEdit = true;
+                PdfDocument doc = PdfReader.Open(docPath, PdfDocumentOpenMode.Import);
+                for (int i = 1; i <= doc.Pages.Count - 1; i++) {
+                    document.AddPage(doc.Pages[i]);
+                    EditingPageSettings pge = new EditingPageSettings(i);
+                    pge.originalOrientation = doc.Pages[i].Orientation;
+                    PageSettings.Add(i, pge);
+                }
+                doc.Close();
+                doc.Dispose();
 
+                grpPageNumbers.Visible = true;
+                txtPageNumber.Text = "1 z " + document.PageCount;
+                IsMultiplepageEdit = true;
+            }
         }
         /// <summary>
         /// Tworzenie edytora do edycji pojedynczej strony
@@ -55,26 +74,22 @@ namespace GUI {
             //Zapis wybranej scieżki
             docPath = file;
             InitializeComponent();
-
+            grpPageNumbers.Visible = false;
             //Listy przechowujące dodawane elementy
-            InsertingElements = new List<PictureBox>();
-            InsertingTexts = new Dictionary<TextBox, int>();
+            InsertingElements = new List<Control>();
+            InsertingElement = null;
 
+            PageSettings = new Dictionary<int, EditingPageSettings>();
+            EditingPageSettings pge = new EditingPageSettings(0);
+            PageSettings.Add(0, pge);
+            PageSettings[0].InsertingElements = InsertingElements;
             //Odczytanie parametrów dokumentu
             PdfDocument doc = PdfReader.Open(docPath, PdfDocumentOpenMode.Import);
-            coverDocument = new PdfDocument();
-            coverDocument.AddPage(doc.Pages[0]);
+            document = new PdfDocument();
+            document.AddPage(doc.Pages[0]);
             doc.Close();
-            PdfPage pge = coverDocument.Pages[0];
-            docWidth = pge.Width.Value;
-            docHeight = pge.Height.Value;
-
-            //Obliczenie wielkości piksela
-            PROP_PIX_MM = pge.Width / pge.Width.Millimeter;
-
-            //Wczytanie pliku jako obraz i wyświetlenie
-            Image imgFFile = ProgramOperations.GetImageFromFile(docPath);
-            picDocument.BackgroundImage = imgFFile;
+            doc.Dispose();
+            ShowPage(0);
 
             //Pozostałe elementy
             ControlMoverOrResizer.WorkType = ControlMoverOrResizer.MoveOrResize.Move;
@@ -87,20 +102,76 @@ namespace GUI {
             }
             cboTextSize.SelectedIndex = 1;
 
-            FontFamily[] fontFamilies;
-
-            InstalledFontCollection installedFontCollection = new InstalledFontCollection();
-            fontFamilies = installedFontCollection.Families;
-            foreach (FontFamily family in fontFamilies) {
-                cboFonts.Items.Add(family.Name);
-            }
+            ProgramSettings.FillComboBoxWithSupportedFonts(cboFonts);
             cboFonts.Text = "Arial";
-
-            //Pokazanie okna
-            this.ShowDialog();
-
         }
+        private async Task ShowPage(int PageNumber) { 
 
+            foreach (Control c in InsertingElements) {
+                c.Visible = false;
+            }
+            if (IsMultiplepageEdit) {
+                InsertingElements = PageSettings[_currentPage].InsertingElements;
+                foreach (Control c in InsertingElements) {
+                    c.Visible = true;
+                }
+            }
+
+            PdfPage pge = document.Pages[PageNumber];
+            Debug.WriteLine(pge.Orientation);
+
+            //Obliczenie wielkości piksela
+            PROP_PIX_MM = pge.Width / pge.Width.Millimeter;
+            Image imgFFile;
+            if (PageSettings[_currentPage].PageImage == null) {
+                //Wczytanie pliku jako obraz i wyświetlenie
+                imgFFile = await ProgramOperations.GetImageFromFile(docPath, _currentPage).ConfigureAwait(false);
+                if (imgFFile.Width > imgFFile.Height) {
+                    pge.Orientation = PdfSharp.PageOrientation.Landscape;
+                } else {
+                    pge.Orientation = PdfSharp.PageOrientation.Portrait;
+                }
+                picDocument.BackgroundImage = imgFFile;
+                PageSettings[_currentPage].PageImage = imgFFile;
+                switch (PageSettings[_currentPage].PageRotation) {
+                    case 90:
+                        imgFFile.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                        break;
+                    case 180:
+                        imgFFile.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                        break;
+                    case 270:
+                        imgFFile.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                        break;
+                    case 0:
+                        break;
+                }
+            } else {
+                imgFFile = PageSettings[_currentPage].PageImage;
+                picDocument.BackgroundImage = imgFFile;
+            }
+            pageWidth = pge.Width.Value;
+            pageHeight = pge.Height.Value;
+            grpDocument.Width = (int)pageWidth;
+            grpDocument.Height = (int)pageHeight;
+
+
+
+            int curWidth = grpDocument.Width;
+            int curHeight = grpDocument.Height;
+            ResizeControlByPrecent(grpDocument, _currentZoom);
+
+            int newWidth = grpDocument.Width;
+            int newHeight = grpDocument.Height;
+            if (_currentZoom != PageSettings[_currentPage].LastZoom) {
+                PageSettings[_currentPage].LastZoom = _currentZoom;
+            }
+
+            PageSettings[_currentPage].PageXMultipiler = (double)grpDocument.Width / pge.Width;
+            PageSettings[_currentPage].PageYMultipiler = (double)grpDocument.Height / pge.Height;
+            txtPageNumber.Text = $"{_currentPage + 1} z {document.PageCount}";
+            grpInCompressing.Visible = false;
+        }
         /// <summary>
         /// Wczytanie parametrów programu zdefiniowanych przez użytkownika w ustawieniach
         /// </summary>
@@ -147,7 +218,7 @@ namespace GUI {
             b.AlternateLabel = txtCodeBarText.Text;
             b.LabelPosition = LabelPositions.BOTTOMCENTER;
             string[] size = cboBarSize.Text.Split('x');
-            int[] imgSize; 
+            int[] imgSize;
             try {
                 //Rozmiar kodu
                 imgSize = new int[] {
@@ -163,7 +234,7 @@ namespace GUI {
             imgSize[0] = Convert.ToInt32((double)imgSize[0] * PROP_PIX_MM);
             imgSize[1] = Convert.ToInt32((double)imgSize[1] * PROP_PIX_MM);
             Image img;
-            
+
             //Próba utworzenia kodu z tekstu i podanych wymiarów
             try {
                 img = b.Encode(TYPE.CODE128B, txtCodeBarText.Text, System.Drawing.Color.Black, System.Drawing.Color.White, imgSize[0], imgSize[1]);
@@ -184,7 +255,7 @@ namespace GUI {
             //Określenie wielości kodu proporcjonalnie do wyświetlanej strony
             double ImageWidthInPix = (ImgWidthOrg);
             ImageWidthInPix *= grpDocument.Width;
-            double ImageWidth = Convert.ToInt32(ImageWidthInPix / docWidth);
+            double ImageWidth = Convert.ToInt32(ImageWidthInPix / pageWidth);
             double ImageHeight = ImageWidth / CODEBAR_PROP;
             picBox.Size = new Size((int)ImageWidth, (int)ImageHeight);
 
@@ -219,15 +290,15 @@ namespace GUI {
             grpTextOptions.Visible = true;
 
             //Dodanie elementu typu TextBox jako dodawany tekst
-            TextBox txB = new TextBox();
+            InsertingTextBox txB = new InsertingTextBox();
             txB.Multiline = true;
             txB.Text = "Wpisz tekst.";
-            bool t = SetStyle(txB,ControlStyles.SupportsTransparentBackColor,true);
+            bool t = SetStyle(txB, ControlStyles.SupportsTransparentBackColor, true);
             txB.BackColor = System.Drawing.Color.Transparent;
             txB.Location = new Point(10, 10);
             grpDocument.Controls.Add(txB);
             txB.BringToFront();
-
+            txB.TargetTextHeight = Convert.ToInt32(cboTextSize.Text);
             //Dodanie możliwości przesuwania, usuwania, umieszczania i wyświetlania opcji tekstu
             ControlMoverOrResizer.Init(txB);
             ControlMoverOrResizer.CheckSize = 1;
@@ -244,10 +315,10 @@ namespace GUI {
             selectedText = txB;
 
             //Dostosowanie wielkości tekstu do rozmiarów wyświetlania dokumentu
-            ResizeTextToView(txB,Convert.ToInt32(cboTextSize.Text));
+            ResizeTextToView(txB);
 
             //Dodanie elementu do listy elementów do dodania
-            InsertingTexts.Add(txB, Convert.ToInt32(cboTextSize.Text));
+            InsertingElements.Add(txB);
 
             //Ustawianie elementu jako obecnie dodawany
             InsertingElement = txB;
@@ -362,8 +433,15 @@ namespace GUI {
 
             int newWidth = grpDocument.Width;
             int newHeight = grpDocument.Height;
-
-            ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 1.1F);
+            _currentZoom = _currentZoom * 1.1F;
+            if (IsMultiplepageEdit) {
+                for (int i = 0; i < PageSettings.Count; i++) {
+                    ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 1.1F, PageSettings[i].InsertingElements);
+                }
+            } else {
+                ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 1.1F, InsertingElements);
+            }
+            PageSettings[_currentPage].LastZoom = _currentZoom;
         }
 
         /// <summary>
@@ -376,8 +454,16 @@ namespace GUI {
 
             int newWidth = grpDocument.Width;
             int newHeight = grpDocument.Height;
+            _currentZoom = _currentZoom * 0.9F;
+            if (IsMultiplepageEdit) {
+                for (int i = 0; i < PageSettings.Count; i++) {
+                    ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 0.9F, PageSettings[i].InsertingElements);
+                }
+            } else {
+                ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 0.9F, InsertingElements);
+            }
+            PageSettings[_currentPage].LastZoom = _currentZoom;
 
-            ResizeAllItemsToNewDocumentViewSize(curWidth, newWidth, curHeight, newHeight, 0.9F);
         }
 
         /// <summary>
@@ -396,9 +482,10 @@ namespace GUI {
         /// <summary>
         /// Dostosuj wielkość elementów TextBox do rozmiarów wyświetlanego papieru
         /// </summary>
-        private void ResizeTextToView(TextBox txb, int TextHeight) {
-            double prop = (double)docWidth / (double)grpDocument.Width;
-            int TextSize = Convert.ToInt32(Convert.ToDouble(TextHeight) / prop);
+        private void ResizeTextToView(InsertingTextBox txb) {
+            double prop = (double)pageWidth / (double)grpDocument.Width;
+            int TextSize = Convert.ToInt32(Convert.ToDouble(txb.TargetTextHeight) / prop);
+            TextSize = (int)((double)TextSize / 1.5);
             txb.Font = new System.Drawing.Font(
                     txb.Font.FontFamily,
                         TextSize, txb.Font.Style);
@@ -409,9 +496,9 @@ namespace GUI {
                 size = TextRenderer.MeasureText(txb.Text, txb.Font);
             }
             //txb.Size = size;
-            txb.Width = size.Width +10;
+            txb.Width = size.Width + 20;
             int lines = txb.Lines.Count();
-            txb.Height = txb.Font.Height * (lines +1);
+            txb.Height = txb.Font.Height * (lines + 1);
             txb.Height -= (int)((double)txb.Font.Height * 0.5F);
 
         }
@@ -424,25 +511,25 @@ namespace GUI {
         /// <param name="oldY">Stara wysokość</param>
         /// <param name="newY">Nowa wysokość</param>
         /// <param name="size">Procent zmiany</param>
-        private void ResizeAllItemsToNewDocumentViewSize(int oldX, int newX, int oldY, int newY, double size) {
+        private void ResizeAllItemsToNewDocumentViewSize(int oldX, int newX, int oldY, int newY, double size, List<Control> controls) {
             double propX = (double)oldX / (double)newX;
             double propY = (double)oldY / (double)newY;
 
             //Zmiana rozmiaru dodawanych obrazków
-            foreach (PictureBox pic in InsertingElements) {
-                int newPosX = Convert.ToInt32((double)pic.Location.X / propX);
-                int newPosY = Convert.ToInt32((double)pic.Location.Y / propY);
-                pic.Location = new Point(newPosX, newPosY);
-                ResizeControlByPrecent(pic, size);
-            }
-
-            //Zmiana rozmiaru dodawanych tekstów
-            foreach (TextBox tb in InsertingTexts.Keys) {
-                int newPosX = Convert.ToInt32((double)tb.Location.X / propX);
-                int newPosY = Convert.ToInt32((double)tb.Location.Y / propY);
-                tb.Location = new Point(newPosX, newPosY);
-                int CurrentTextHeight = InsertingTexts[tb];
-                ResizeTextToView(tb,CurrentTextHeight);
+            foreach (Control cnt in controls) {
+                if (cnt is PictureBox) {
+                    int newPosX = Convert.ToInt32((double)cnt.Location.X / propX);
+                    int newPosY = Convert.ToInt32((double)cnt.Location.Y / propY);
+                    cnt.Location = new Point(newPosX, newPosY);
+                    ResizeControlByPrecent(cnt, size);
+                } else if (cnt is InsertingTextBox) {
+                    InsertingTextBox txB = (InsertingTextBox)cnt;
+                    int newPosX = Convert.ToInt32((double)cnt.Location.X / propX);
+                    int newPosY = Convert.ToInt32((double)cnt.Location.Y / propY);
+                    cnt.Location = new Point(newPosX, newPosY);
+                    int CurrentTextHeight = txB.TargetTextHeight;
+                    ResizeTextToView(txB);
+                }
             }
         }
 
@@ -464,17 +551,16 @@ namespace GUI {
                 selectedText.Font = f;
                 System.Drawing.Size size = TextRenderer.MeasureText(selectedText.Text, selectedText.Font);
                 selectedText.Size = size;
-                int CurrentTextHeight = InsertingTexts[selectedText];
-                ResizeTextToView(selectedText,CurrentTextHeight);
+                ResizeTextToView(selectedText);
             }
         }
 
         //Usuwanie wskazanego elementu
         private void DeleteItem(object c, EventArgs e) {
             if (_deleting) {
-                if (c is TextBox) {
-                    TextBox tb = (TextBox)c;
-                    InsertingTexts.Remove(tb);
+                if (c is InsertingTextBox) {
+                    InsertingTextBox tb = (InsertingTextBox)c;
+                    InsertingElements.Remove(tb);
                     tb.Dispose();
                 } else if (c is PictureBox) {
                     PictureBox pb = (PictureBox)c;
@@ -498,8 +584,8 @@ namespace GUI {
             fbd.FilterIndex = 0;
             if (fbd.ShowDialog() == DialogResult.OK) {
                 string folder = fbd.FileName;
-                SaveChanges(true,folder);
-                System.Diagnostics.Process.Start(folder);
+                SaveChanges(true, folder);
+                System.Diagnostics.Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true });
                 this.Close();
             }
         }
@@ -508,7 +594,7 @@ namespace GUI {
         /// Zapisywanie zmian bez tworzenia nowego pliku
         /// </summary>
         private void btnSaveChanges_Click(object sender, EventArgs e) {
-                SaveChanges(false);
+            SaveChanges(false);
             this.Close();
         }
         /// <summary>
@@ -517,73 +603,114 @@ namespace GUI {
         /// <param name="saveAsPdf"></param>
         /// <param name="folder"></param>
         private void SaveChanges(bool saveAsPdf, string folder = "") {
-            double multipilerX = (double)grpDocument.Width / docWidth;
-            double multipilerY = (double)grpDocument.Height / docHeight;
-            PdfPage page = coverDocument.Pages[0];
-            XGraphics graphics = XGraphics.FromPdfPage(page);
-            foreach (PictureBox pixB in InsertingElements) {
-                int elemLocationX = Convert.ToInt32(pixB.Location.X / multipilerX);
-                int elemLocationY = Convert.ToInt32(pixB.Location.Y / multipilerY);
-                int elemWidth = Convert.ToInt32(pixB.Width / multipilerX);
-                int elemHeight = Convert.ToInt32(pixB.Height / multipilerY);
-                Image img = pixB.BackgroundImage;
-                MemoryStream ms = new MemoryStream();
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                XImage xImg = XImage.FromStream(ms);
-                graphics.DrawImage(xImg, elemLocationX, elemLocationY, elemWidth, elemHeight);
-            }
-            foreach (TextBox txB in InsertingTexts.Keys) {
-                int Size = InsertingTexts[txB];
-                System.Drawing.Font f = new System.Drawing.Font(
-                  txB.Font.FontFamily,
-                  Size, txB.Font.Style);
-                XFontStyle xStyle;
-                if (f.Bold && f.Italic) {
-                    xStyle = XFontStyle.BoldItalic;
-                } else if (f.Bold) {
-                    xStyle = XFontStyle.Bold;
-                } else if (f.Italic) {
-                    xStyle = XFontStyle.Italic;
-                } else {
-                    xStyle = XFontStyle.Regular;
+            multipilerX = (double)grpDocument.Width / pageWidth;
+            multipilerY = (double)grpDocument.Height / pageHeight;
+            if (IsMultiplepageEdit) {
+                for (int i = 0; i < document.Pages.Count; i++) {
+                    PdfPage pge = document.Pages[i];
+                    pge.Orientation = PageSettings[i].originalOrientation;
+                    SaveItemsOnPage(pge, PageSettings[i].InsertingElements, i);
                 }
-
-                XFont font = new XFont(f.FontFamily.Name, Size, xStyle);
-                int elemLocationX = Convert.ToInt32(txB.Location.X / multipilerX);
-                int elemLocationY = Convert.ToInt32(txB.Location.Y / multipilerY);
-                XPoint p = new XPoint(elemLocationX, elemLocationY);
-                System.Drawing.Color c = txB.ForeColor;
-                XColor xc = XColor.FromArgb(c.R, c.G, c.B);
-                XBrush br = new XSolidBrush(xc);
-                XTextFormatter formatter = new XTextFormatter(graphics);
-                var TxtSize = TextRenderer.MeasureText(txB.Text, txB.Font);
-                switch (txB.TextAlign) {
-                    case HorizontalAlignment.Left:
-                        formatter.Alignment = XParagraphAlignment.Left;
-                        break;
-                    case HorizontalAlignment.Center:
-                        formatter.Alignment = XParagraphAlignment.Center;
-                        break;
-                    case HorizontalAlignment.Right:
-                        formatter.Alignment = XParagraphAlignment.Right;
-                        break;
-                }
-                XRect rect = new XRect(p.X,p.Y, TxtSize.Height, TxtSize.Width);
-                
-                formatter.DrawString(txB.Text, font, br, rect);
-                //graphics.DrawString(txB.Text, font, br, p);
+            } else {
+                PdfPage page = document.Pages[0];
+                SaveItemsOnPage(page, InsertingElements, 0);
             }
-            graphics.Dispose();
-            if (saveAsPdf) {
-                coverDocument.Save(folder);
+            try {
+                if (saveAsPdf) {
+                    document.Save(folder);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show("Błąd podczas zapisu pliku!");
             }
         }
 
+        /// <summary>
+        /// Zapisanie wszystkich dodawanych elementów na stronę
+        /// </summary>
+        /// <param name="page">Strona dokumentu</param>
+        /// <param name="elements">Wstawiane elementy</param>
+        private void SaveItemsOnPage(PdfPage page, List<Control> elements, int numerator) {
+            XGraphics graphics = XGraphics.FromPdfPage(page);
+            double proporties = (double)grpDocument.Height / pageHeight;
+            foreach (Control cont in elements) {
+                if (cont is PictureBox) {
+                    int elemLocationX, elemLocationY, elemWidth, elemHeight;
+                    if (IsMultiplepageEdit) {
+                        elemLocationX = Convert.ToInt32(cont.Location.X / PageSettings[numerator].PageXMultipiler);
+                        elemLocationY = Convert.ToInt32(cont.Location.Y / PageSettings[numerator].PageYMultipiler);
+                        elemWidth = Convert.ToInt32(cont.Width / PageSettings[numerator].PageXMultipiler);
+                        elemHeight = Convert.ToInt32(cont.Height / PageSettings[numerator].PageYMultipiler);
+                    } else {
+                        elemLocationX = Convert.ToInt32(cont.Location.X / multipilerX);
+                        elemLocationY = Convert.ToInt32(cont.Location.Y / multipilerY);
+                        elemWidth = Convert.ToInt32(cont.Width / multipilerX);
+                        elemHeight = Convert.ToInt32(cont.Height / multipilerY);
+                    }
+                    Image img = cont.BackgroundImage;
+                    MemoryStream ms = new MemoryStream();
+                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    XImage xImg = XImage.FromStream(ms);
+                    graphics.DrawImage(xImg, elemLocationX, elemLocationY, elemWidth, elemHeight);
+                } else if (cont is InsertingTextBox) {
+
+                    InsertingTextBox txB = (InsertingTextBox)cont;
+                    System.Drawing.Font f = new System.Drawing.Font(
+                  txB.Font.FontFamily,
+                  txB.TargetTextHeight, txB.Font.Style);
+
+                    XFontStyle xStyle;
+                    if (f.Bold && f.Italic) {
+                        xStyle = XFontStyle.BoldItalic;
+                    } else if (f.Bold) {
+                        xStyle = XFontStyle.Bold;
+                    } else if (f.Italic) {
+                        xStyle = XFontStyle.Italic;
+                    } else {
+                        xStyle = XFontStyle.Regular;
+                    }
+
+                    XFont font = new XFont(f.FontFamily.Name, txB.TargetTextHeight, xStyle);
+
+                    int elemLocationX, elemLocationY;
+                    if (IsMultiplepageEdit) {
+                        elemLocationX = Convert.ToInt32(cont.Location.X / PageSettings[numerator].PageXMultipiler);
+                        elemLocationY = Convert.ToInt32(cont.Location.Y / PageSettings[numerator].PageYMultipiler);
+                    } else {
+                        elemLocationX = Convert.ToInt32(cont.Location.X / multipilerX);
+                        elemLocationY = Convert.ToInt32(cont.Location.Y / multipilerY);
+                    }
+                    XPoint p = new XPoint(elemLocationX, elemLocationY);
+                    System.Drawing.Color c = txB.ForeColor;
+                    XColor xc = XColor.FromArgb(c.R, c.G, c.B);
+                    XBrush br = new XSolidBrush(xc);
+                    XTextFormatter formatter = new XTextFormatter(graphics);
+                    var TxtSize = TextRenderer.MeasureText(txB.Text, txB.Font);
+                    switch (txB.TextAlign) {
+                        case HorizontalAlignment.Left:
+                            formatter.Alignment = XParagraphAlignment.Left;
+                            break;
+                        case HorizontalAlignment.Center:
+                            formatter.Alignment = XParagraphAlignment.Center;
+                            break;
+                        case HorizontalAlignment.Right:
+                            formatter.Alignment = XParagraphAlignment.Right;
+                            break;
+                    }
+
+                    XRect rect = new XRect();
+                    rect.Location = new XPoint(p.X, p.Y);
+                    rect.Width = Convert.ToInt32(txB.Width / multipilerX);
+                    rect.Height = Convert.ToInt32(txB.Height / multipilerY);
+                    formatter.DrawString(txB.Text, font, br, rect);
+                }
+            }
+            graphics.Dispose();
+        }
         #endregion
 
         #region Obsługa zdarzeń
         private void textBoxMouseClick(object sender, MouseEventArgs e) {
-            selectedText = (TextBox)sender;
+            selectedText = (InsertingTextBox)sender;
             selectedText.BackColor = System.Drawing.Color.LightBlue;
             grpTextOptions.Visible = true;
         }
@@ -596,8 +723,9 @@ namespace GUI {
                 System.Drawing.Size size = TextRenderer.MeasureText(selectedText.Text, selectedText.Font);
                 selectedText.Size = size;
 
-                InsertingTexts[selectedText] = Convert.ToInt32(cboTextSize.Text);
-                ResizeTextToView(selectedText,Convert.ToInt32(cboTextSize.Text));
+                //InsertingTexts[selectedText] = Convert.ToInt32(cboTextSize.Text);
+                selectedText.TargetTextHeight = Convert.ToInt32(cboTextSize.Text);
+                ResizeTextToView(selectedText);
             }
 
         }
@@ -605,11 +733,18 @@ namespace GUI {
             if (c is TextBox) {
                 ControlMoverOrResizer.WorkType = ControlMoverOrResizer.MoveOrResize.Move;
                 ControlMoverOrResizer.CheckSize = 1;
-                selectedText = (TextBox)c;
+                if (selectedText != null) {
+                    selectedText.BackColor = System.Drawing.Color.Transparent;
+                    selectedText = null;
+                }
+                selectedText = (InsertingTextBox)c;
                 grpDocument.Visible = true;
                 System.Drawing.Font f = selectedText.Font;
                 chkBold.Checked = f.Bold;
                 chkItalic.Checked = f.Italic;
+                cboFonts.Text = f.FontFamily.Name;
+                btnColor.BackColor = selectedText.ForeColor;
+                cboTextSize.Text = selectedText.TargetTextHeight.ToString();
             } else if (c is PictureBox) {
                 ControlMoverOrResizer.WorkType = ControlMoverOrResizer.MoveOrResize.MoveAndResize;
                 ControlMoverOrResizer.CheckSize = 10;
@@ -627,11 +762,14 @@ namespace GUI {
             }
         }
         private void picDocument_Click(object sender, EventArgs e) {
+            if (InsertingElement != null) {
+                InsertingElement = null;
+            }
             ChceckIfTextIsSelected();
             grpTextOptions.Visible = false;
         }
         private void TextChanged(object sender, EventArgs e) {
-            ResizeTextToView((TextBox)sender,InsertingTexts[(TextBox)sender]);
+            ResizeTextToView((InsertingTextBox)sender);
         }
         private void cboFonts_SelectedIndexChanged(object sender, EventArgs e) {
             if (selectedText != null) {
@@ -641,9 +779,7 @@ namespace GUI {
                     selectedText.Font.Style);
                 System.Drawing.Size size = TextRenderer.MeasureText(selectedText.Text, selectedText.Font);
                 selectedText.Size = size;
-                InsertingTexts[selectedText] = Convert.ToInt32(cboTextSize.Text);
-                int CurrentTextHeight = InsertingTexts[selectedText];
-                ResizeTextToView(selectedText,CurrentTextHeight);
+                ResizeTextToView(selectedText);
             }
         }
         private void picDocument_MouseMove(object sender, MouseEventArgs e) {
@@ -656,7 +792,7 @@ namespace GUI {
         private void ChceckIfTextIsSelected() {
             if (selectedText != null) {
                 selectedText.BackColor = System.Drawing.Color.Transparent;
-                picDocument.Focus();
+                groupBox4.Focus();
                 selectedText = null;
             }
         }
@@ -688,5 +824,99 @@ namespace GUI {
             }
         }
         #endregion
+
+        /// <summary>
+        /// Przejście do poprzedniej strony
+        /// </summary>
+        private async void btnPreviousPage_Click(object sender, EventArgs e) {
+            if (_currentPage != 0) {
+                _currentPage--;
+                this.Invoke(new Action(() => {
+                    grpInCompressing.Visible = true;
+                    InLoadingImage().ConfigureAwait(false);
+                    ShowPage(_currentPage);
+                    grpInCompressing.Visible = false;
+                }));
+            }
+        }
+
+        /// <summary>
+        /// Przejście do nastepnej strony
+        /// </summary>
+        private void btnNextPage_Click(object sender, EventArgs e) {
+            if (_currentPage != document.PageCount - 1) {
+                _currentPage++;
+                grpInCompressing.Visible = true;
+                InLoadingImage().ConfigureAwait(false);
+                Application.DoEvents();
+                _ = Task.Run(() => {
+                    this.Invoke(new Action(() => {
+                        ShowPage(_currentPage).ConfigureAwait(true);
+                    }));
+                });
+            }
+        }
+
+        /// <summary>
+        /// Animowana ikona przetwarzania
+        /// </summary>
+        private async Task InLoadingImage() {
+            _ = Task.Run(() => {
+                int i = 0;
+                while (grpInCompressing.Visible) {
+                    Thread.Sleep(500);
+                    if (i == 0) {
+                        this.picLoading.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.pending_work;
+                        Application.DoEvents();
+                        i = 1;
+                    } else {
+                        this.picLoading.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.pending_work2;
+                        Application.DoEvents();
+                        i = 0;
+                    }
+                }
+            });
+
+        }
+
+        /// <summary>
+        /// Akceptacja tyllko cyfr i obsluga entera
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtPageNumber_KeyPress(object sender, KeyPressEventArgs e) {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+                    (e.KeyChar != '.')) {
+                e.Handled = true;
+            }
+
+            if (e.KeyChar == Convert.ToChar(Keys.Enter)) {
+                int Page = Convert.ToInt32(txtPageNumber.Text);
+                if (Page > 0 && Page <= document.PageCount) {
+                    _currentPage = Page -1;
+                    grpInCompressing.Visible = true;
+                    InLoadingImage().ConfigureAwait(false);
+                    Application.DoEvents();
+                    _ = Task.Run(() => {
+                        this.Invoke(new Action(() => {
+                            ShowPage(_currentPage).ConfigureAwait(true);
+                        }));
+                    });
+
+                } else {
+                    MessageBox.Show("Nieprawidłowy numer strony");
+                    txtPageNumber.Text = $"{_currentPage + 1} z {document.PageCount}";
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            if (grpInCompressing.Visible) {
+                grpInCompressing.Visible = false;
+            } else {
+                grpInCompressing.Visible = true;
+                InLoadingImage().ConfigureAwait(false);
+            }
+        }
     }
 }

@@ -37,6 +37,7 @@ namespace GUI {
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnFileEdit = new System.Windows.Forms.Button();
             this.btnFilesFromDirectory = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -69,6 +70,7 @@ namespace GUI {
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.txtInformation = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.txtCoverPath = new System.Windows.Forms.TextBox();
             this.lblCoverInfo = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -83,6 +85,7 @@ namespace GUI {
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,7 +99,7 @@ namespace GUI {
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox1.Size = new System.Drawing.Size(450, 882);
+            this.groupBox1.Size = new System.Drawing.Size(450, 838);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Pliki";
@@ -126,7 +129,7 @@ namespace GUI {
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvFiles.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvFiles.Location = new System.Drawing.Point(3, 24);
+            this.dgvFiles.Location = new System.Drawing.Point(3, 22);
             this.dgvFiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dgvFiles.MultiSelect = false;
             this.dgvFiles.Name = "dgvFiles";
@@ -137,7 +140,7 @@ namespace GUI {
             this.dgvFiles.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvFiles.RowTemplate.Height = 24;
             this.dgvFiles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvFiles.Size = new System.Drawing.Size(382, 854);
+            this.dgvFiles.Size = new System.Drawing.Size(382, 812);
             this.dgvFiles.StandardTab = true;
             this.dgvFiles.TabIndex = 21;
             this.toolTip1.SetToolTip(this.dgvFiles, "Pliki do połączenia. Kolejność od góry do dołu.");
@@ -167,6 +170,7 @@ namespace GUI {
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnFileEdit);
             this.panel2.Controls.Add(this.btnFilesFromDirectory);
             this.panel2.Controls.Add(this.btnSettings);
             this.panel2.Controls.Add(this.btnDelete);
@@ -175,20 +179,33 @@ namespace GUI {
             this.panel2.Controls.Add(this.btnDol);
             this.panel2.Controls.Add(this.btnGora);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(385, 24);
+            this.panel2.Location = new System.Drawing.Point(385, 22);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(62, 854);
+            this.panel2.Size = new System.Drawing.Size(62, 812);
             this.panel2.TabIndex = 19;
+            // 
+            // btnFileEdit
+            // 
+            this.btnFileEdit.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.document_edit;
+            this.btnFileEdit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnFileEdit.Location = new System.Drawing.Point(10, 336);
+            this.btnFileEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnFileEdit.Name = "btnFileEdit";
+            this.btnFileEdit.Size = new System.Drawing.Size(40, 38);
+            this.btnFileEdit.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.btnFileEdit, "Edytuj wybrany plik");
+            this.btnFileEdit.UseVisualStyleBackColor = true;
+            this.btnFileEdit.Click += new System.EventHandler(this.btnFileEdit_Click);
             // 
             // btnFilesFromDirectory
             // 
             this.btnFilesFromDirectory.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.folder_download;
             this.btnFilesFromDirectory.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnFilesFromDirectory.Location = new System.Drawing.Point(10, 59);
+            this.btnFilesFromDirectory.Location = new System.Drawing.Point(10, 56);
             this.btnFilesFromDirectory.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnFilesFromDirectory.Name = "btnFilesFromDirectory";
-            this.btnFilesFromDirectory.Size = new System.Drawing.Size(40, 40);
+            this.btnFilesFromDirectory.Size = new System.Drawing.Size(40, 38);
             this.btnFilesFromDirectory.TabIndex = 18;
             this.toolTip1.SetToolTip(this.btnFilesFromDirectory, "Wczytaj wszystkie pliku ze wskazanego folderu");
             this.btnFilesFromDirectory.UseVisualStyleBackColor = true;
@@ -198,10 +215,10 @@ namespace GUI {
             // 
             this.btnSettings.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.gears;
             this.btnSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSettings.Location = new System.Drawing.Point(10, 257);
+            this.btnSettings.Location = new System.Drawing.Point(10, 244);
             this.btnSettings.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(40, 40);
+            this.btnSettings.Size = new System.Drawing.Size(40, 38);
             this.btnSettings.TabIndex = 17;
             this.toolTip1.SetToolTip(this.btnSettings, "Konfiguracja");
             this.btnSettings.UseVisualStyleBackColor = true;
@@ -211,10 +228,10 @@ namespace GUI {
             // 
             this.btnDelete.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.delete;
             this.btnDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnDelete.Location = new System.Drawing.Point(10, 209);
+            this.btnDelete.Location = new System.Drawing.Point(10, 199);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(40, 40);
+            this.btnDelete.Size = new System.Drawing.Size(40, 38);
             this.btnDelete.TabIndex = 16;
             this.toolTip1.SetToolTip(this.btnDelete, "Usuń zaznaczony plik z listy");
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -224,10 +241,10 @@ namespace GUI {
             // 
             this.btnMerge.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.compare_file;
             this.btnMerge.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnMerge.Location = new System.Drawing.Point(10, 305);
+            this.btnMerge.Location = new System.Drawing.Point(10, 290);
             this.btnMerge.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnMerge.Name = "btnMerge";
-            this.btnMerge.Size = new System.Drawing.Size(40, 40);
+            this.btnMerge.Size = new System.Drawing.Size(40, 38);
             this.btnMerge.TabIndex = 15;
             this.toolTip1.SetToolTip(this.btnMerge, "Ustawienia łączenia plików");
             this.btnMerge.UseVisualStyleBackColor = true;
@@ -237,10 +254,10 @@ namespace GUI {
             // 
             this.btnSzukaj.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.search_file;
             this.btnSzukaj.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSzukaj.Location = new System.Drawing.Point(10, 12);
+            this.btnSzukaj.Location = new System.Drawing.Point(10, 11);
             this.btnSzukaj.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSzukaj.Name = "btnSzukaj";
-            this.btnSzukaj.Size = new System.Drawing.Size(40, 40);
+            this.btnSzukaj.Size = new System.Drawing.Size(40, 38);
             this.btnSzukaj.TabIndex = 6;
             this.toolTip1.SetToolTip(this.btnSzukaj, "Wyszukaj pliki na dysku");
             this.btnSzukaj.UseVisualStyleBackColor = true;
@@ -250,10 +267,10 @@ namespace GUI {
             // 
             this.btnDol.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.bottom_arrow;
             this.btnDol.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnDol.Location = new System.Drawing.Point(10, 159);
+            this.btnDol.Location = new System.Drawing.Point(10, 151);
             this.btnDol.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnDol.Name = "btnDol";
-            this.btnDol.Size = new System.Drawing.Size(40, 40);
+            this.btnDol.Size = new System.Drawing.Size(40, 38);
             this.btnDol.TabIndex = 5;
             this.toolTip1.SetToolTip(this.btnDol, "Przesuń plik w dół");
             this.btnDol.UseVisualStyleBackColor = true;
@@ -263,10 +280,10 @@ namespace GUI {
             // 
             this.btnGora.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.top_arrow;
             this.btnGora.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnGora.Location = new System.Drawing.Point(10, 107);
+            this.btnGora.Location = new System.Drawing.Point(10, 102);
             this.btnGora.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnGora.Name = "btnGora";
-            this.btnGora.Size = new System.Drawing.Size(40, 40);
+            this.btnGora.Size = new System.Drawing.Size(40, 38);
             this.btnGora.TabIndex = 4;
             this.toolTip1.SetToolTip(this.btnGora, "Przesuń plik do góry");
             this.btnGora.UseVisualStyleBackColor = true;
@@ -281,7 +298,7 @@ namespace GUI {
             this.btnProgramSettings.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnProgramSettings.Name = "btnProgramSettings";
             this.btnProgramSettings.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.btnProgramSettings.Size = new System.Drawing.Size(40, 50);
+            this.btnProgramSettings.Size = new System.Drawing.Size(40, 48);
             this.btnProgramSettings.TabIndex = 16;
             this.toolTip1.SetToolTip(this.btnProgramSettings, "Ustawienia programu");
             this.btnProgramSettings.UseVisualStyleBackColor = true;
@@ -291,10 +308,10 @@ namespace GUI {
             // 
             this.btnCoverEdit.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.document_edit;
             this.btnCoverEdit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCoverEdit.Location = new System.Drawing.Point(16, 109);
+            this.btnCoverEdit.Location = new System.Drawing.Point(16, 104);
             this.btnCoverEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCoverEdit.Name = "btnCoverEdit";
-            this.btnCoverEdit.Size = new System.Drawing.Size(40, 40);
+            this.btnCoverEdit.Size = new System.Drawing.Size(40, 38);
             this.btnCoverEdit.TabIndex = 15;
             this.toolTip1.SetToolTip(this.btnCoverEdit, "Edytuj okładkę");
             this.btnCoverEdit.UseVisualStyleBackColor = true;
@@ -303,10 +320,10 @@ namespace GUI {
             // chkAddCoverWithoutChanges
             // 
             this.chkAddCoverWithoutChanges.AutoSize = true;
-            this.chkAddCoverWithoutChanges.Location = new System.Drawing.Point(16, 159);
+            this.chkAddCoverWithoutChanges.Location = new System.Drawing.Point(16, 151);
             this.chkAddCoverWithoutChanges.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chkAddCoverWithoutChanges.Name = "chkAddCoverWithoutChanges";
-            this.chkAddCoverWithoutChanges.Size = new System.Drawing.Size(155, 24);
+            this.chkAddCoverWithoutChanges.Size = new System.Drawing.Size(143, 24);
             this.chkAddCoverWithoutChanges.TabIndex = 17;
             this.chkAddCoverWithoutChanges.Text = "Dodaj bez edycji";
             this.toolTip1.SetToolTip(this.chkAddCoverWithoutChanges, "Dodaje orginalną okładkę");
@@ -315,13 +332,15 @@ namespace GUI {
             // 
             // btnSearchCover
             // 
+            this.btnSearchCover.AutoEllipsis = true;
+            this.btnSearchCover.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnSearchCover.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.search_file;
             this.btnSearchCover.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSearchCover.Location = new System.Drawing.Point(372, 34);
+            this.btnSearchCover.Location = new System.Drawing.Point(370, 17);
             this.btnSearchCover.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSearchCover.Name = "btnSearchCover";
-            this.btnSearchCover.Size = new System.Drawing.Size(40, 40);
-            this.btnSearchCover.TabIndex = 2;
+            this.btnSearchCover.Size = new System.Drawing.Size(38, 38);
+            this.btnSearchCover.TabIndex = 7;
             this.toolTip1.SetToolTip(this.btnSearchCover, "Wyszukaj okładkę na dysku");
             this.btnSearchCover.UseVisualStyleBackColor = true;
             this.btnSearchCover.Click += new System.EventHandler(this.btnSearchCover_Click_1);
@@ -333,11 +352,11 @@ namespace GUI {
             this.grpStatus.Controls.Add(this.lblProcessingFile);
             this.grpStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.grpStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.grpStatus.Location = new System.Drawing.Point(450, 456);
+            this.grpStatus.Location = new System.Drawing.Point(450, 433);
             this.grpStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.grpStatus.Name = "grpStatus";
             this.grpStatus.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.grpStatus.Size = new System.Drawing.Size(487, 426);
+            this.grpStatus.Size = new System.Drawing.Size(487, 405);
             this.grpStatus.TabIndex = 16;
             this.grpStatus.TabStop = false;
             this.grpStatus.Text = "Status operacji";
@@ -351,28 +370,28 @@ namespace GUI {
             this.panelMerging.Controls.Add(this.label2);
             this.panelMerging.Controls.Add(this.label1);
             this.panelMerging.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelMerging.Location = new System.Drawing.Point(3, 104);
+            this.panelMerging.Location = new System.Drawing.Point(3, 98);
             this.panelMerging.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelMerging.Name = "panelMerging";
-            this.panelMerging.Size = new System.Drawing.Size(481, 266);
+            this.panelMerging.Size = new System.Drawing.Size(481, 253);
             this.panelMerging.TabIndex = 19;
             // 
             // lblPageCounter
             // 
             this.lblPageCounter.AutoSize = true;
             this.lblPageCounter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblPageCounter.Location = new System.Drawing.Point(143, 29);
+            this.lblPageCounter.Location = new System.Drawing.Point(143, 28);
             this.lblPageCounter.Name = "lblPageCounter";
-            this.lblPageCounter.Size = new System.Drawing.Size(55, 20);
+            this.lblPageCounter.Size = new System.Drawing.Size(52, 20);
             this.lblPageCounter.TabIndex = 10;
             this.lblPageCounter.Text = "1 z 10";
             // 
             // pgrPages
             // 
-            this.pgrPages.Location = new System.Drawing.Point(8, 66);
+            this.pgrPages.Location = new System.Drawing.Point(8, 63);
             this.pgrPages.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pgrPages.Name = "pgrPages";
-            this.pgrPages.Size = new System.Drawing.Size(408, 29);
+            this.pgrPages.Size = new System.Drawing.Size(408, 28);
             this.pgrPages.TabIndex = 8;
             // 
             // groupBox2
@@ -382,11 +401,11 @@ namespace GUI {
             this.groupBox2.Controls.Add(this.lblFileCounter);
             this.groupBox2.Controls.Add(this.pgrFiles);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(3, 102);
+            this.groupBox2.Location = new System.Drawing.Point(3, 97);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox2.Size = new System.Drawing.Size(420, 148);
+            this.groupBox2.Size = new System.Drawing.Size(420, 141);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Całkowity postęp:";
@@ -395,9 +414,9 @@ namespace GUI {
             // 
             this.lblPages.AutoSize = true;
             this.lblPages.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblPages.Location = new System.Drawing.Point(140, 66);
+            this.lblPages.Location = new System.Drawing.Point(140, 63);
             this.lblPages.Name = "lblPages";
-            this.lblPages.Size = new System.Drawing.Size(55, 20);
+            this.lblPages.Size = new System.Drawing.Size(52, 20);
             this.lblPages.TabIndex = 13;
             this.lblPages.Text = "1 z 10";
             // 
@@ -405,9 +424,9 @@ namespace GUI {
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(36, 70);
+            this.label4.Location = new System.Drawing.Point(36, 66);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(94, 16);
+            this.label4.Size = new System.Drawing.Size(89, 15);
             this.label4.TabIndex = 12;
             this.label4.Text = "Liczba stron:";
             // 
@@ -415,27 +434,27 @@ namespace GUI {
             // 
             this.lblFileCounter.AutoSize = true;
             this.lblFileCounter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblFileCounter.Location = new System.Drawing.Point(140, 38);
+            this.lblFileCounter.Location = new System.Drawing.Point(140, 36);
             this.lblFileCounter.Name = "lblFileCounter";
-            this.lblFileCounter.Size = new System.Drawing.Size(55, 20);
+            this.lblFileCounter.Size = new System.Drawing.Size(52, 20);
             this.lblFileCounter.TabIndex = 11;
             this.lblFileCounter.Text = "1 z 10";
             // 
             // pgrFiles
             // 
-            this.pgrFiles.Location = new System.Drawing.Point(6, 98);
+            this.pgrFiles.Location = new System.Drawing.Point(6, 93);
             this.pgrFiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pgrFiles.Name = "pgrFiles";
-            this.pgrFiles.Size = new System.Drawing.Size(408, 29);
+            this.pgrFiles.Size = new System.Drawing.Size(408, 28);
             this.pgrFiles.TabIndex = 7;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(10, 38);
+            this.label3.Location = new System.Drawing.Point(10, 36);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 16);
+            this.label3.Size = new System.Drawing.Size(109, 15);
             this.label3.TabIndex = 5;
             this.label3.Text = "Połączone pliki:";
             // 
@@ -443,9 +462,9 @@ namespace GUI {
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(83, 31);
+            this.label2.Location = new System.Drawing.Point(83, 29);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 16);
+            this.label2.Size = new System.Drawing.Size(53, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "Strona:";
             // 
@@ -455,7 +474,7 @@ namespace GUI {
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label1.Location = new System.Drawing.Point(7, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 16);
+            this.label1.Size = new System.Drawing.Size(123, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "Przetwarzany plik:";
             // 
@@ -465,11 +484,11 @@ namespace GUI {
             this.grpInCompressing.Controls.Add(this.lblProcessing);
             this.grpInCompressing.Dock = System.Windows.Forms.DockStyle.Top;
             this.grpInCompressing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.grpInCompressing.Location = new System.Drawing.Point(3, 24);
+            this.grpInCompressing.Location = new System.Drawing.Point(3, 22);
             this.grpInCompressing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.grpInCompressing.Name = "grpInCompressing";
             this.grpInCompressing.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.grpInCompressing.Size = new System.Drawing.Size(481, 80);
+            this.grpInCompressing.Size = new System.Drawing.Size(481, 76);
             this.grpInCompressing.TabIndex = 18;
             this.grpInCompressing.TabStop = false;
             this.grpInCompressing.Text = "Przetwarzanie ";
@@ -478,10 +497,10 @@ namespace GUI {
             // 
             this.picLoading.BackgroundImage = global::Przetwarzanie_plikow_PDF.Resource.pending_work;
             this.picLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.picLoading.Location = new System.Drawing.Point(16, 26);
+            this.picLoading.Location = new System.Drawing.Point(16, 25);
             this.picLoading.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.picLoading.Name = "picLoading";
-            this.picLoading.Size = new System.Drawing.Size(48, 46);
+            this.picLoading.Size = new System.Drawing.Size(48, 44);
             this.picLoading.TabIndex = 20;
             this.picLoading.TabStop = false;
             // 
@@ -489,9 +508,9 @@ namespace GUI {
             // 
             this.lblProcessing.AutoSize = true;
             this.lblProcessing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblProcessing.Location = new System.Drawing.Point(70, 34);
+            this.lblProcessing.Location = new System.Drawing.Point(70, 32);
             this.lblProcessing.Name = "lblProcessing";
-            this.lblProcessing.Size = new System.Drawing.Size(303, 20);
+            this.lblProcessing.Size = new System.Drawing.Size(281, 20);
             this.lblProcessing.TabIndex = 19;
             this.lblProcessing.Text = "Proszę czekać trwa optymalizacja pliku";
             // 
@@ -499,7 +518,7 @@ namespace GUI {
             // 
             this.lblProcessingFile.AutoSize = true;
             this.lblProcessingFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblProcessingFile.Location = new System.Drawing.Point(155, 38);
+            this.lblProcessingFile.Location = new System.Drawing.Point(155, 36);
             this.lblProcessingFile.Name = "lblProcessingFile";
             this.lblProcessingFile.Size = new System.Drawing.Size(117, 20);
             this.lblProcessingFile.TabIndex = 9;
@@ -516,7 +535,7 @@ namespace GUI {
             this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox3.Size = new System.Drawing.Size(487, 448);
+            this.groupBox3.Size = new System.Drawing.Size(487, 426);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Opcje ogólne";
@@ -525,11 +544,11 @@ namespace GUI {
             // 
             this.groupBox5.Controls.Add(this.txtInformation);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox5.Location = new System.Drawing.Point(3, 264);
+            this.groupBox5.Location = new System.Drawing.Point(3, 250);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox5.Size = new System.Drawing.Size(481, 178);
+            this.groupBox5.Size = new System.Drawing.Size(481, 169);
             this.groupBox5.TabIndex = 22;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Informacje:";
@@ -538,49 +557,64 @@ namespace GUI {
             // 
             this.txtInformation.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.txtInformation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtInformation.Location = new System.Drawing.Point(3, 24);
+            this.txtInformation.Location = new System.Drawing.Point(3, 22);
             this.txtInformation.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtInformation.Multiline = true;
             this.txtInformation.Name = "txtInformation";
             this.txtInformation.ReadOnly = true;
             this.txtInformation.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInformation.Size = new System.Drawing.Size(475, 150);
+            this.txtInformation.Size = new System.Drawing.Size(475, 143);
             this.txtInformation.TabIndex = 20;
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.txtCoverPath);
+            this.groupBox4.Controls.Add(this.tableLayoutPanel1);
             this.groupBox4.Controls.Add(this.chkAddCoverWithoutChanges);
             this.groupBox4.Controls.Add(this.lblCoverInfo);
             this.groupBox4.Controls.Add(this.btnCoverEdit);
-            this.groupBox4.Controls.Add(this.btnSearchCover);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.groupBox4.Location = new System.Drawing.Point(3, 74);
+            this.groupBox4.Location = new System.Drawing.Point(3, 70);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox4.Size = new System.Drawing.Size(481, 190);
+            this.groupBox4.Size = new System.Drawing.Size(481, 180);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Okładka";
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.33334F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
+            this.tableLayoutPanel1.Controls.Add(this.txtCoverPath, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.btnSearchCover, 1, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 22);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 84F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(475, 59);
+            this.tableLayoutPanel1.TabIndex = 8;
+            // 
             // txtCoverPath
             // 
-            this.txtCoverPath.Location = new System.Drawing.Point(12, 42);
+            this.txtCoverPath.Location = new System.Drawing.Point(3, 17);
             this.txtCoverPath.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCoverPath.Name = "txtCoverPath";
             this.txtCoverPath.ReadOnly = true;
-            this.txtCoverPath.Size = new System.Drawing.Size(354, 27);
-            this.txtCoverPath.TabIndex = 3;
+            this.txtCoverPath.Size = new System.Drawing.Size(354, 25);
+            this.txtCoverPath.TabIndex = 6;
             // 
             // lblCoverInfo
             // 
             this.lblCoverInfo.AutoSize = true;
             this.lblCoverInfo.ForeColor = System.Drawing.Color.Lime;
-            this.lblCoverInfo.Location = new System.Drawing.Point(12, 80);
+            this.lblCoverInfo.Location = new System.Drawing.Point(123, 127);
             this.lblCoverInfo.Name = "lblCoverInfo";
-            this.lblCoverInfo.Size = new System.Drawing.Size(206, 20);
+            this.lblCoverInfo.Size = new System.Drawing.Size(198, 20);
             this.lblCoverInfo.TabIndex = 16;
             this.lblCoverInfo.Text = "Pomyślnie dodano okładkę";
             this.lblCoverInfo.Visible = false;
@@ -589,18 +623,18 @@ namespace GUI {
             // 
             this.panel1.Controls.Add(this.btnProgramSettings);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(3, 24);
+            this.panel1.Location = new System.Drawing.Point(3, 22);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(481, 50);
+            this.panel1.Size = new System.Drawing.Size(481, 48);
             this.panel1.TabIndex = 18;
             // 
             // MainWindow
             // 
             this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(937, 882);
+            this.ClientSize = new System.Drawing.Size(937, 838);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.grpStatus);
             this.Controls.Add(this.groupBox1);
@@ -628,6 +662,8 @@ namespace GUI {
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -660,9 +696,7 @@ namespace GUI {
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.PictureBox picLoading;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox txtCoverPath;
         private System.Windows.Forms.Button btnCoverEdit;
-        private System.Windows.Forms.Button btnSearchCover;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnProgramSettings;
         private System.Windows.Forms.Panel panelMerging;
@@ -675,5 +709,9 @@ namespace GUI {
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.Button btnFileEdit;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TextBox txtCoverPath;
+        private System.Windows.Forms.Button btnSearchCover;
     }
 }

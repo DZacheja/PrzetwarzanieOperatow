@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * Klasa zawiera te same elementy co ProgramSettings
  * jednak nie jest klasą statyczną dzięki czemu można z łatwością
  * zapisać elementy do XML i wczytaj z XML

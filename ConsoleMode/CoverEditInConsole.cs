@@ -1,4 +1,7 @@
-﻿using BarcodeLib;
+﻿/**
+ * Klasa zawierająca zestaw funkcji do edytowania pliku okładki z poziomu konsoli
+ */
+using BarcodeLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
@@ -21,8 +24,7 @@ namespace ConsoleMode {
         /// <summary>
         /// Otwarcie okładki ze ściezki
         /// </summary>
-        public CoverEditInConsole(string path)
-            {
+        public CoverEditInConsole(string path) {
             string filePath = ProgramOperations.ConvertFileToPdf(path);
             if (filePath != null) {
                 PdfDocument pdfDoc = PdfReader.Open(path, PdfDocumentOpenMode.Import);
@@ -98,12 +100,13 @@ namespace ConsoleMode {
         private void AddCodeBar() {
             Console.Clear();
             Console.WriteLine("Wpisz następujące parametry po przecinku: ");
-            Console.WriteLine("Tekst kodu, Szerokość [mm], Wysokość [mm], Pozycja od lewej w [mm], Pozycja od góry w [mm]");
+            Console.WriteLine("Tekst kodu, Szerokość [mm], Wysokość [mm], \nOpcjonalnie: Pozycja od lewej w [mm], Pozycja od góry w [mm]");
             string[] parametry = Console.ReadLine().Split(',');
 
             //Sprawdzenie parametrów
-            if (parametry.Length != 5) {
+            if (!((parametry.Length == 3) || (parametry.Length == 5))) {
                 Console.WriteLine("Pominięto parametr!");
+                Console.ReadLine();
                 ShowEditMenu();
                 return;
             }
@@ -124,12 +127,21 @@ namespace ConsoleMode {
             b.LabelPosition = LabelPositions.BOTTOMCENTER;
             int[] imgSize;
             try {
-                imgSize = new int[]{
-                Convert.ToInt32(Convert.ToDouble(parametry[1]) * prop),
-                Convert.ToInt32(Convert.ToDouble(parametry[2]) * prop),
-                Convert.ToInt32(Convert.ToDouble(parametry[3]) * prop),
-                Convert.ToInt32(Convert.ToDouble(parametry[4]) * prop)
+                if (parametry.Length == 5) {
+                    imgSize = new int[]{
+                    Convert.ToInt32(Convert.ToDouble(parametry[1]) * prop),
+                    Convert.ToInt32(Convert.ToDouble(parametry[2]) * prop),
+                    Convert.ToInt32(Convert.ToDouble(parametry[3]) * prop),
+                    Convert.ToInt32(Convert.ToDouble(parametry[4]) * prop)
                 };
+                } else {
+                    imgSize = new int[] {
+                        Convert.ToInt32(Convert.ToDouble(parametry[1]) * prop),
+                        Convert.ToInt32(Convert.ToDouble(parametry[2]) * prop),
+                        ((int)page.Width - Convert.ToInt32(Convert.ToDouble(parametry[1]) * prop) - 15),
+                        15
+                    };
+                }
 
             } catch (Exception) {
                 Console.WriteLine("Błędna wartosć rozmiaru lub położenia kodu");

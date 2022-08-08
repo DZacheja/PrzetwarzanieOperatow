@@ -1,4 +1,7 @@
-﻿using PdfSharp.Pdf;
+﻿/**
+ * Menu główne trybu pracy konsoli
+ */
+using PdfSharp.Pdf;
 using ProgramConfiguration;
 using Przetwarzanie_plików_PDF;
 using System;
@@ -17,9 +20,45 @@ namespace ConsoleMode {
         /// Konstruktor.
         /// Wyświetlenie menu programu i oczekiwanie na wybór użytkownika
         /// </summary>
-        public MainMenuConsole() {
+        public MainMenuConsole(string[] args = null) {
             FilesList = new List<string>();
 
+            //Dodanie plików wywołanych przez program
+            if (args is not null) {
+                List<string> newFiles = new List<string>();
+                bool coverIsNest = false;
+                foreach (string s in args) {
+                    if (s == "-o") {
+                        coverIsNest = true;
+                        continue;
+                    }
+
+                    if (coverIsNest) {
+                        AddCover(s);
+                        if (CoverPath != null) {
+                            newFiles.Add("Okładka: " + Path.GetFileName(s));
+                        }
+                        coverIsNest = false;
+                        continue;
+                    }
+                    string test = ProgramOperations.ExtensionCheck(s);
+                    if (test != null) {
+                        FilesList.Add(s);
+                        newFiles.Add(Path.GetFileName(s));
+                    }
+
+                }
+                Console.Clear();
+                if (newFiles.Count > 0) {
+                    Console.WriteLine($"Pomyślnie dodano {newFiles.Count} plików:");
+                    foreach (string file in newFiles) {
+                        Console.WriteLine(file);
+                    }
+                } else {
+                    Console.WriteLine("Nierozpoznane parametry...\nZostanie wyświetlone menu główne.");
+                }
+                Console.ReadLine();
+            }
             while (true) {
                 ShowMainMenu();
                 Console.Write("\nWprowadź numer opcji:");
@@ -87,7 +126,7 @@ namespace ConsoleMode {
                 "4. Wyświetl dodane pliki\n" +
                 "5. Edytuj okładkę\n" +
                 "6. Ustaw parametry połączenia plików\n" +
-                "7. Wczytaj parametry łączenia plików przygotowane w GUI\n"+
+                "7. Wczytaj parametry łączenia plików przygotowane w GUI\n" +
                 "8. Połącz pliki\n" +
                 "9. Zakończ program\n"
                 );
@@ -99,18 +138,24 @@ namespace ConsoleMode {
         /// <summary>
         /// Dodanie okładki
         /// </summary>
-        private void AddCover() {
-            Console.Clear();
-            Console.Write("Wpisz ścieżkę do pliku z okładką:");
-            string path = Console.ReadLine();
-            ProgramOperations.ExtensionCheck(path);
-            if (path != null) {
-                CoverPath = path;
-                Console.WriteLine("Dodano pomyślnie!");
-            } else {
-                Console.WriteLine("Nieobsługiwany typ pliku!");
+        private void AddCover(string path = "") {
+            bool stopAfterAdd = false;
+            if (path == "") {
+                stopAfterAdd = true;
+                Console.Clear();
+                Console.Write("Wpisz ścieżkę do pliku z okładką:");
+                path = Console.ReadLine();
             }
-            Console.ReadLine();
+            string test = ProgramOperations.ExtensionCheck(path);
+            if (test != null) {
+                CoverPath = path;
+                Console.WriteLine("Dodano pomyślnie okładkę!");
+            } else {
+                Console.WriteLine("Nieobsługiwany typ pliku okładki!");
+            }
+            if (stopAfterAdd) {
+                Console.ReadLine();
+            }
 
         }
 
@@ -121,8 +166,8 @@ namespace ConsoleMode {
             Console.Clear();
             Console.Write("Wpisz ścieżkę do pliku:");
             string path = Console.ReadLine();
-            ProgramOperations.ExtensionCheck(path);
-            if (path != null) {
+            string test = ProgramOperations.ExtensionCheck(path);
+            if (test != null) {
                 FilesList.Add(path);
                 Console.WriteLine("Dodano pomyślnie!");
             } else {
@@ -142,8 +187,8 @@ namespace ConsoleMode {
 
             List<string> newFiles = new List<string>();
             foreach (string file in files) {
-                ProgramOperations.ExtensionCheck(file);
-                if (path != null) {
+                string test = ProgramOperations.ExtensionCheck(file);
+                if (test != null) {
                     FilesList.Add(file);
                     newFiles.Add(file);
                 }
@@ -193,7 +238,7 @@ namespace ConsoleMode {
             string fullPath = Path.Combine(path, file);
             if (coverDoc != null) {
                 ProgramOperations.MergeFiles(FilesList, fullPath, coverDoc);
-            }else if (CoverPath != null) {
+            } else if (CoverPath != null) {
                 ProgramOperations.MergeFiles(FilesList, fullPath, CoverPath);
             } else {
                 ProgramOperations.MergeFiles(FilesList, fullPath);
@@ -339,7 +384,7 @@ namespace ConsoleMode {
         private void LoadSettingsFromFile() {
             Console.Clear();
             Console.WriteLine("Wprowadź ścieżke do pliku z ustawieniami:");
-            string path =Console.ReadLine();
+            string path = Console.ReadLine();
             try {
                 OnLoadSettingsClas olsc = OnLoadSettingsClas.ReadAsXmlFormat<OnLoadSettingsClas>(path);
                 ProgramSettings.LoadSettingsFromObject(olsc);

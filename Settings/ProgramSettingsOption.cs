@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * GUI do zapisywania parametrów użytkownika
  */
 using Przetwarzanie_plików_PDF;
