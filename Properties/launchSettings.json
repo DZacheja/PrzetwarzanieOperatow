@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ProgramGUGiK": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "asdasdasd"
     }
   }
 }
