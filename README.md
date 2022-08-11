@@ -67,8 +67,8 @@ Obsługa programu z poziomu GUI daje wiele możliwości konfiguracji przetwarzan
 ### Edycja okładki lub innego pliku
 <br>
 <p align="center">
-<img src="Opis Ikony/Edycja strony.png" Width=500 Height=400>
-<img src="Opis Ikony/Edycja pliku.png" Width=500 Height=400>
+<img src="Opis Ikony/Edycja strony.png" Width=400 Height=300>
+<img src="Opis Ikony/Edycja pliku.png" Width=400 Height=300>
 </p>
 
 
