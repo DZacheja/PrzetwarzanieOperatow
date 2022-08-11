@@ -105,6 +105,6 @@ Wybranie któregoś z elementów wyświetli kolejne opcje do wyboru.
 <b>Damian Zacheja</b>
 
 ## Licencja
-
+[MIT](https://github.com/DZacheja/PrzetwarzanieOperatow/blob/master/LICENSE)
 
  
